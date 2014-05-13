@@ -1,1 +1,3 @@
 *.pyc
+settings.py
+dev_settings.py
