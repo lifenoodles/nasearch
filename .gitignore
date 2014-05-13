@@ -1,3 +1,4 @@
 *.pyc
 settings.py
-dev_settings.py
+settings_dev.py
+*.sublime-project
