@@ -1,0 +1,4 @@
+django>=1.6.4
+requests>=2.2.1
+opml >= 0.5
+feedparser >= 5.12
