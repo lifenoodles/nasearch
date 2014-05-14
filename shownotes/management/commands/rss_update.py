@@ -1,6 +1,6 @@
-from django.core.management.base import BaseCommand, CommandError
-from shownotes.models import Show, Entry
+from django.core.management.base import BaseCommand
 from bs4 import BeautifulSoup
+from shownotes.management.datasources import OpmlLoader
 import feedparser
 import requests
 
@@ -30,8 +30,8 @@ def show_exists(show_id):
 
 
 class Command(BaseCommand):
-    NA_RSS_URL = 'http://feed.nashownotes.com/'
     help = 'Fetches updates from the no agenda rss feed'
+    NA_RSS_URL = 'http://feed.nashownotes.com/'
 
     def handle(self, *arks, **options):
         feed = get_feed(Command.NA_RSS_URL)
@@ -41,23 +41,15 @@ class Command(BaseCommand):
                           for entry in sublist
                           if 'noagendanotes' in entry]
 
-        # DEBUG, just run for 1 show
-        shownote_links = [shownote_links[0]]
-
         # visit opml for each link pointed to
-        opmls = []
-        for response in get_pages(shownote_links):
-            opmls += filter(lambda x: '.opml' in x,
-                            extract_links_from_html(response.text))
+        responses = [r for r in get_pages(shownote_links)]
+        opmls = [x.url.replace('html', 'opml') for x in responses]
 
-        for opml in get_pages(opmls):
-            pass
-
-        self.stdout.write(repr(opmls))
-
-        # check if these show notes exist in the database
-
-        # if it doesn't
-            # insert
-        # if it's newer
-            # update
+        for opml in opmls:
+            self.stdout.write('Loading {}'.format(opml))
+            try:
+                loader = OpmlLoader(opml)
+                loader.save()
+                self.stdout.write('opml parsed for episode {}'.format(loader.number))
+            except Exception as e:
+                self.stdout.write('Error occured while loading opml: {}'.format(e))
