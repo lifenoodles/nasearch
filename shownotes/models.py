@@ -10,13 +10,28 @@ class Show(models.Model):
         return '{}: {}'.format(self.id, self.name)
 
 
-class Entry(models.Model):
+class Note(models.Model):
     show = models.ForeignKey(Show)
     topic = models.CharField(max_length=100)
-    type = models.CharField(max_length=20)
     title = models.TextField()
-    content = models.TextField()
 
     def __unicode__(self):
         return '{} [{}]: {}'.format(
-            self.topic, self.type, self.content[:20])
+            self.topic, self.show.id, self.title)
+
+
+class TextEntry(models.Model):
+    note = models.ForeignKey(Note)
+    text = models.TextField()
+
+    def __unicode__(self):
+        return '{}: {}'.format('text', self.content[:20])
+
+
+class UrlEntry(models.Model):
+    note = models.ForeignKey(Note)
+    text = models.CharField(max_length=100)
+    url = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return '{}: {}'.format('url', self.text[:20])
