@@ -70,9 +70,10 @@ class OpmlLoader(object):
                 if len(note) == 0:
                     continue
                 new_note = Note(
-                    show=show, topic=topic_name, title=note.text)
+                    show=show, topic=topic_name,
+                    title=note.text)
                 new_note.save()
-                full_text = ''
+                full_text = []
                 for entry in note:
                     if hasattr(entry, 'type'):
                         new_entry = UrlEntry(
@@ -81,7 +82,7 @@ class OpmlLoader(object):
                             url=entry.url)
                         new_entry.save()
                     else:
-                        full_text += entry.text
+                        full_text.append(entry.text)
                 new_entry = TextEntry(
-                    note=new_note, text=full_text)
+                    note=new_note, text='\n'.join(full_text))
                 new_entry.save()

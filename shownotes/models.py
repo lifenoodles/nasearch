@@ -30,8 +30,8 @@ class TextEntry(models.Model):
 
 class UrlEntry(models.Model):
     note = models.ForeignKey(Note)
-    text = models.CharField(max_length=100)
-    url = models.CharField(max_length=200)
+    text = models.TextField()
+    url = models.TextField()
 
     def __unicode__(self):
         return '{}: {}'.format('url', self.text[:20])
