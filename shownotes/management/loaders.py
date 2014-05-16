@@ -1,6 +1,17 @@
 import opml
-from shownotes.models import Show, Note, TextEntry, UrlEntry
+import common.netutils as netutils
 from datetime import datetime
+from shownotes.models import Show, Note, TextEntry, UrlEntry
+
+
+def opml_from_shownotes(*urls):
+    '''
+    returns a list of opml files corresponding to the given
+    shownote url
+    '''
+    responses = [r for r in netutils.get_pages(*urls)]
+    opmls = [x.url.replace('html', 'opml') for x in responses]
+    return opmls
 
 
 class OpmlLoader(object):
