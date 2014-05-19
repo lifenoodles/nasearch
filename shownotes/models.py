@@ -17,7 +17,7 @@ class Note(models.Model):
 
     def __unicode__(self):
         return '{} [{}]: {}'.format(
-            self.topic, self.show.id, self.title)
+            self.topic, self.show.id, self.title[:20])
 
 
 class TextEntry(models.Model):
@@ -25,7 +25,7 @@ class TextEntry(models.Model):
     text = models.TextField()
 
     def __unicode__(self):
-        return '{}: {}'.format('text', self.content[:20])
+        return '{}: {}'.format('text', self.text[:20])
 
 
 class UrlEntry(models.Model):
