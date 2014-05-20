@@ -1,15 +1,19 @@
-(function () {
-    "use strict"
+/*jslint browser: true*/
+/*global $*/
 
-    $(document).ready(function() {
+(function () {
+    "use strict";
+
+    $(document).ready(function () {
         function search() {
             $.get(
                 'search',
                 {"string": $("#search-field").val()},
-                function(response) {
+                function (response) {
                     $("#content").html("");
                     $("#content").append(response);
-                });
+                }
+            );
         }
 
         $("#search-button").click(search);
@@ -19,4 +23,4 @@
             }
         });
     });
-}())
+}());
