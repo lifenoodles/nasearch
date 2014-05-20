@@ -19,6 +19,10 @@ class Note(models.Model):
         return '{} [{}]: {}'.format(
             self.topic, self.show.id, self.title[:20])
 
+    @classmethod
+    def get_by_topic(cls, topic):
+        return Note.objects.filter(topic=topic)
+
 
 class TextEntry(models.Model):
     note = models.ForeignKey(Note)
@@ -26,6 +30,10 @@ class TextEntry(models.Model):
 
     def __unicode__(self):
         return '{}: {}'.format('text', self.text[:20])
+
+    @classmethod
+    def get_by_note(cls, note):
+        return TextEntry.objects.filter(note=note)
 
 
 class UrlEntry(models.Model):
@@ -35,3 +43,7 @@ class UrlEntry(models.Model):
 
     def __unicode__(self):
         return '{}: {}'.format('url', self.text[:20])
+
+    @classmethod
+    def get_by_note(cls, note):
+        return UrlEntry.objects.filter(note=note)
