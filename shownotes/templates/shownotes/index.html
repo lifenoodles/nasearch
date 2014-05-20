@@ -3,16 +3,36 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>No Agenda Shownotes Search</title>
     <link rel="stylesheet"
-        href="{% static "shownotes/css/bootstrap.min.css" %}">
+        href="{% static "shownotes/css/bootstrap.css" %}">
+    <link rel="stylesheet"
+        href="{% static "shownotes/css/style.css" %}">
 </head>
 <body>
-    <div>
-        <h1>{{ text }}</h1>
+<div class="navbar navbar-inverse navbar-static-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand"
+                href="#">Shownote Search</a>
+        </div>
     </div>
+</div>
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="input-group">
+                <input type="text" class="form-control">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">Search</button>
+                </span>
+            </div><!-- /input-group -->
+        </div><!-- /.row -->
+    </div>
+</div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>
-    <script src="{% static "shownotes/js/bootstrap.min.js" %}" type="text/javascript"></script>
+    <script src="" type="text/javascript"></script>
+    <script src="{% static "shownotes/js/bootstrap.js" %}" type="text/javascript"></script>
 </body>
 </html>
