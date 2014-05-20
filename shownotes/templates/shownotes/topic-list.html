@@ -1,7 +1,12 @@
 <ul>
 {% autoescape off %}
-{% for title in titles %}
-<li>{{ title }}</li>
+{% for show in shows %}
+<li>{{ show.name }}</li>
+    <ul>
+    {% for note in show_map.show %}
+    <li>{{ note.title }}</li>
+    {% endfor %}
+    </ul>
 {% endfor %}
 {% endautoescape %}
 </ul>
