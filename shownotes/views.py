@@ -1,6 +1,6 @@
 from models import Note, Show
-from django.http import HttpResponse
 from django.shortcuts import render
+from collections import defaultdict
 
 
 def index(request):
@@ -9,22 +9,19 @@ def index(request):
 
 def search_topics(request):
     if 'string' in request.GET:
-        string = request.GET['string']
-        notes = Note.get_by_topic(string).order_by('-show')
+        notes = Note.get_by_topic(
+            request.GET['string']).order_by('-show')
         shows = notes.values('show').distinct()
-        show_ids = [s['show'] for s in shows]
-        shows = Show.objects.in_bulk(show_ids)
-        shows = sorted(shows.values(),
-                       reverse=True,
-                       key=lambda x: x.id)
-        show_map = {}
-        for show in shows:
-            show_map[show] = []
+        shows = Show.objects.in_bulk(
+            [s['show'] for s in shows]).values()
+        show_map = defaultdict(list)
         for note in notes:
             show_map[note.show].append(note)
-        print show_map
+        show_notes = [(show, show_map[show]) for show in shows]
+        show_notes.sort(reverse=True,
+                        key=lambda (x, _): x.id)
 
-        context = {'show_map': show_map, 'shows': shows}
+        context = {'show_notes': show_notes}
         return render(
             request, 'shownotes/topic-list.html', context)
     else:

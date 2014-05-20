@@ -1,9 +1,9 @@
 <ul>
 {% autoescape off %}
-{% for show in shows %}
+{% for show, notes in show_notes %}
 <li>{{ show.name }}</li>
     <ul>
-    {% for note in show_map.show %}
+    {% for note in notes %}
     <li>{{ note.title }}</li>
     {% endfor %}
     </ul>
