@@ -4,7 +4,7 @@
 <li>{{ show.name }}</li>
     <ul>
     {% for note in notes %}
-    <li>{{ note.title }}</li>
+    <li id="{{ note.id }}">{{ note.title }}</li>
     {% endfor %}
     </ul>
 {% endfor %}

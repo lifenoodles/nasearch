@@ -1,4 +1,4 @@
-from models import Note, Show
+from models import Note
 from django.shortcuts import render
 from collections import defaultdict
 
@@ -25,5 +25,5 @@ def search_topics(request):
         return render(request, 'shownotes/topic-list.html')
 
 
-def note_details(request):
+def note_entries(request):
     pass
