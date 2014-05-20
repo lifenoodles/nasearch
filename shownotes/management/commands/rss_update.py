@@ -13,9 +13,6 @@ class Command(BaseCommand):
         shownote_links = filter(lambda x: 'noagendanotes' in x,
                                 netutils.extract_urls_from_rss(feed))
 
-        # debug, only consider some elements
-        shownote_links = shownote_links[10:]
-        # print shownote_links
         opmls = loaders.opml_from_shownotes(*shownote_links)
 
         # visit opml for each link pointed to
@@ -25,7 +22,7 @@ class Command(BaseCommand):
             loader = loaders.OpmlLoader(opml)
             loader.save()
             self.stdout.write('opml parsed for episode {}'
-                              .format(loader.show_id))
+                              .format(loader.number))
             # except Exception as e:
             #     self.stdout.write('Error occured while loading opml: {}'
             #                       .format(e))
