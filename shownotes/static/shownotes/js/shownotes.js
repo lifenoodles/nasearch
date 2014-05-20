@@ -3,7 +3,13 @@
 
     $(document).ready(function() {
         function search() {
-            alert("lol no");
+            $.get(
+                'search',
+                {"string": $("#search-field").val()},
+                function(response) {
+                    $("#content").html("");
+                    $("#content").append(response);
+                });
         }
 
         $("#search-button").click(search);
