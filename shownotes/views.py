@@ -1,6 +1,8 @@
 from models import Note, UrlEntry, TextEntry
 from django.shortcuts import render
 from collections import defaultdict
+from django.http import HttpResponse
+import json
 
 
 def index(request):
@@ -43,5 +45,8 @@ def search_topics(request):
         return render(request, 'shownotes/topic-list.html')
 
 
-def note_entries(request):
-    pass
+def topics(request):
+    response = {}
+    response['topics'] = [('topic', 1)]
+    return HttpResponse(json.dumps(response),
+                        content_type='application/json')
