@@ -1,0 +1,45 @@
+.pointer {
+    cursor: pointer;
+}
+
+.not-visible {
+    display: none;
+}
+
+.bg-primary a {
+    color: orange;
+}
+
+li {
+    padding: 4px;
+}
+
+.bg-grey {
+    background-color: #F6F6F6;
+}
+
+.show-title {
+    margin-top: 1em;
+}
+
+.jumbotron {
+    margin-bottom: 10px;
+}
+
+.icon-list li {
+  padding: 0 0 5px 20px;
+  display: block;
+  position: relative;
+}
+
+.icon-list li:before {
+  font-family: 'Glyphicons Halflings';
+  position: absolute;
+  left: 0;
+  top: 3px;
+  font-size: 80%
+}
+
+.chevron-right li:before {
+ content: '\e080';
+}

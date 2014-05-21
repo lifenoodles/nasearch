@@ -1,17 +1,27 @@
-<ul>
+<div>
+<ul class="list-unstyled">
 {% autoescape off %}
 {% for show, notes_entries in show_notes %}
-<li>{{ show.name }}</li>
-<ul>
+<li><h4 class="show-title">{{ show.name }}</h4></li>
+<div>
+
     {% for note, entries in notes_entries %}
-    <li>{{ note.title }}</li>
-    <ul>
+
+    <div class="shownote-heading-div bg-info">
+    <li class="shownote-heading pointer">{{ note.title }}
+    <span class="caret"></span></li>
+    </div>
+    <div class="not-visible bg-grey shownote-entries">
+    <ul class="list-unstyled icon-list chevron-right">
         {% for entry in entries %}
             <li>{{ entry }}</li>
         {% endfor %}
     </ul>
+    </div>
     {% endfor %}
-</ul>
+
+</div>
 {% endfor %}
 {% endautoescape %}
 </ul>
+</div>

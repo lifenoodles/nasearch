@@ -11,7 +11,6 @@ def search_topics(request):
     if 'string' in request.GET:
         notes = Note.get_by_topic(
             request.GET['string']).order_by('-show')
-        print notes
 
         # map entries to notes
         note_map = defaultdict(list)
@@ -22,7 +21,6 @@ def search_topics(request):
             text_entries = TextEntry.get_by_note(note)
             for text in text_entries:
                 note_map[note].append(text.text_web())
-            print note, url_entries, text_entries
 
         # map notes to shows
         show_map = defaultdict(list)
