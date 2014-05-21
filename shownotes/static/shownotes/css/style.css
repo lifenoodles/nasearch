@@ -30,6 +30,14 @@ li {
     margin-bottom: 10px;
 }
 
+.twitter-typeahead {
+    width: 100% !important;
+}
+
+.typeahead {
+    float: none !important;
+}
+
 .icon-list li {
   padding: 0 0 5px 20px;
   display: block;

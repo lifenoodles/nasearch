@@ -9,6 +9,8 @@
         href="{% static "shownotes/css/bootstrap.css" %}">
     <link rel="stylesheet"
         href="{% static "shownotes/css/style.css" %}">
+    <link rel="stylesheet"
+        href="{% static "shownotes/css/typeahead.css" %}">
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-static-top" role="navigation">
@@ -23,6 +25,14 @@
     <div class="container">
         <div class="row">
             <div class="input-group">
+            <span class="input-group-addon front-label">Topic Filters</span>
+            <input id="topic-field" class="typeahead form-control" type="text" placeholder="">
+            </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <span class="input-group-addon front-label">Containing Text</span>
                 <input id="search-field" type="text" class="form-control">
                 <span class="input-group-btn">
                     <button id="search-button" class="btn btn-default" type="button">Search</button>
@@ -38,6 +48,8 @@
 
     <script src="{% static "shownotes/js/jquery-1.11.1.min.js" %}" type="text/javascript"></script>
     <script src="{% static "shownotes/js/bootstrap.js" %}" type="text/javascript"></script>
+    <script src="{% static "shownotes/js/typeahead.bundle.min.js" %}" type="text/javascript"></script>
     <script src="{% static "shownotes/js/shownotes.js" %}" type="text/javascript"></script>
 </body>
 </html>
+
