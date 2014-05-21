@@ -15,7 +15,8 @@
         this.getTopics = function () {
             //TODO: do ajax, fake it for now
             var view = {
-                topics: ["topic1", "topic2", "topic3"]
+                topics: ["topic1", "topic2", "topic3",
+                    "topic4", "topic5"]
             };
             this.render(view);
         };
@@ -28,22 +29,6 @@
 
         // initialise data and render
         this.getTopics();
-    }
-
-    function fuzzyMatcher(entries) {
-        return function (q, cb) {
-            var matches, regex;
-            matches = [];
-            regex = new RegExp(q, "i");
-
-            /*jslint unparam: true*/
-            $.each(entries, function (i, str) {
-                if (regex.test(str)) {
-                    matches.push({ value: str });
-                }
-            });
-            cb(matches);
-        };
     }
 
     $(document).ready(function () {

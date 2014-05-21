@@ -22,18 +22,37 @@ li {
     margin: 0 0 6px 0;
 }
 
+.stacker {
+    position: absolute;
+    right: 0;
+    z-index: 100;
+}
+
+.selected-topics {
+    float: right;
+    width: 100%;
+}
+
 /* topic dropdown menu */
 .topic-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 100;
-  display: block;
   right: auto;
+  left: auto;
+  max-width: 200px;
 }
 
 .topic-suggestion {
-  display: block;
+  margin: 5px;
+  padding: 2px 5px;
+  background-color: #B6E6E6;
+  border-color: #B6E6E6;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  float: left;
+}
+
+.fake-suggestion .invisible{
+  float: left;
 }
 
 /* overriding bootstrap */
