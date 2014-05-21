@@ -1,10 +1,34 @@
 /*jslint browser: true*/
-/*global $*/
+/*global $, Mustache*/
 
 (function () {
     "use strict";
 
-    var sample_data = ["string", "test", "data", "string2"];
+    function TopicPopupView() {
+        this.template = $('#topic-list-template').html();
+
+        this.render = function (view) {
+            var rendered = Mustache.render(this.template, view);
+            $('#topic-field').after(rendered);
+        };
+
+        this.getTopics = function () {
+            //TODO: do ajax, fake it for now
+            var view = {
+                topics: ["topic1", "topic2", "topic3"]
+            };
+            this.render(view);
+        };
+
+        this.filter = function () {
+            return null;
+        };
+
+        // register event handlers
+
+        // initialise data and render
+        this.getTopics();
+    }
 
     function fuzzyMatcher(entries) {
         return function (q, cb) {
@@ -18,12 +42,14 @@
                     matches.push({ value: str });
                 }
             });
-
             cb(matches);
         };
     }
 
     $(document).ready(function () {
+        Mustache.tags = ["[[", "]]"];
+        var topicPopupView = new TopicPopupView();
+
         function search() {
             $.get(
                 'search',
@@ -34,14 +60,6 @@
                 }
             );
         }
-
-        $('.typeahead').typeahead({
-            minLength: 3,
-            highlight: true,
-        }, {
-            name: 'topic-dataset',
-            source: fuzzyMatcher(sample_data)
-        });
 
         $("#content").on("click", ".shownote-heading-div",
             function () {
