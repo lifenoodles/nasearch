@@ -6,10 +6,6 @@
     display: none;
 }
 
-.bg-primary a {
-    color: orange;
-}
-
 li {
     padding: 4px;
 }
@@ -26,10 +22,30 @@ li {
     margin: 0 0 6px 0;
 }
 
+/* topic dropdown menu */
+.topic-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  display: block;
+  right: auto;
+}
+
+.topic-suggestion {
+  display: block;
+}
+
+/* overriding bootstrap */
 .jumbotron {
     margin-bottom: 10px;
 }
 
+.bg-primary a {
+    color: orange;
+}
+
+/* overriding typeahead */
 .twitter-typeahead {
     width: 100% !important;
 }
@@ -38,6 +54,7 @@ li {
     float: none !important;
 }
 
+/* styles for icons in lists */
 .icon-list li {
   padding: 0 0 5px 20px;
   display: block;
