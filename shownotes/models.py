@@ -28,6 +28,9 @@ class TextEntry(models.Model):
     note = models.ForeignKey(Note)
     text = models.TextField()
 
+    def text_web(self):
+        return self.text.replace('\n', '<br>')
+
     def __unicode__(self):
         return '{}: {}'.format('text', self.text[:20])
 
@@ -40,6 +43,9 @@ class UrlEntry(models.Model):
     note = models.ForeignKey(Note)
     text = models.TextField()
     url = models.TextField()
+
+    def link(self):
+        return '<a href={}>{}</a>'.format(self.url, self.url)
 
     def __unicode__(self):
         return '{}: {}'.format('url', self.text[:20])

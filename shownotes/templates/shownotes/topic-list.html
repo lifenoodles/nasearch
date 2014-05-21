@@ -1,12 +1,17 @@
 <ul>
 {% autoescape off %}
-{% for show, notes in show_notes %}
+{% for show, notes_entries in show_notes %}
 <li>{{ show.name }}</li>
+<ul>
+    {% for note, entries in notes_entries %}
+    <li>{{ note.title }}</li>
     <ul>
-    {% for note in notes %}
-    <li id="{{ note.id }}">{{ note.title }}</li>
-    {% endfor %}
+        {% for entry in entries %}
+            <li>{{ entry }}</li>
+        {% endfor %}
     </ul>
+    {% endfor %}
+</ul>
 {% endfor %}
 {% endautoescape %}
 </ul>
