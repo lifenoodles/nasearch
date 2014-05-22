@@ -91,3 +91,7 @@ li {
 .chevron-right li:before {
  content: '\e080';
 }
+
+.right {
+    float: right;
+}

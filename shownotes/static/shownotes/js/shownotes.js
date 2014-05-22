@@ -35,7 +35,8 @@
                 Mustache.render(self.template, self.view)
             );
             $('.selected-topics').append(
-                Mustache.render(self.selectedTemplate, self.view)
+                Mustache.render(self.selectedTemplate,
+                    {topics: self.view.topics.reverse()})
             );
         };
 
