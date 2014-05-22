@@ -7,27 +7,32 @@
     function TopicPopupView() {
         var self = this;
         self.template = $('#topic-list-template').html();
-        self.selectedTemplate = $('#topic-selected-template').html();
+        self.selectedTemplate =
+            $('#topic-selected-template').html();
         self.view = {};
         self.topics = {};
 
-        self.click_unpicked = function () {
-            var text = $(this).html(),
+        self.click_unpicked = function (event) {
+            var text = $(this).html().trim(),
                 topic = self.topics[text],
                 id = topic.id;
             // topic.on = false;
             $(this).hide();
             $(".selected-topics").find("#topic" + id).toggle();
-            console.log($(".selected-topics").find("#topic" + id).length);
+            console.log($(".selected-topics")
+                .find("#topic" + id).length);
+            event.stopPropagation();
         };
 
-        self.click_picked = function () {
-            var text = $(this).html(),
+        self.click_picked = function (event) {
+            var text = $(this).html().trim(),
                 topic = self.topics[text],
                 id = topic.id;
             // topic.on = true;
             $(this).hide();
-            $(".topic-suggestions").find("#topic" + id).toggle();
+            $(".topic-suggestions").find("#topic" + id)
+                .toggle();
+            event.stopPropagation();
         };
 
         self.render = function () {
@@ -41,29 +46,28 @@
         };
 
         self.getTopics = function () {
-            var i,
-                topics = [
-                    {text: "topic1", on: true, id: 1},
-                    {text: "topic2", on: true, id: 2},
-                    {text: "topic3", on: true, id: 3},
-                    {text: "topic4", on: true, id: 4},
-                    {text: "topic5", on: true, id: 5}];
-            //TODO: do ajax, fake it for now
-            self.view = {
-                topics: topics
-            };
+            function handleResponse(response) {
+                var i,
+                    topics = response;
 
-            for (i = 0; i < topics.length; i += 1) {
-                self.topics[topics[i].text] = topics[i];
+                self.view = {
+                    topics: topics
+                };
+
+                for (i = 0; i < topics.length; i += 1) {
+                    self.topics[topics[i].text] = topics[i];
+                }
+
+                self.render();
+                $(".topic-suggestions")
+                    .find(".topic-suggestion")
+                    .click(self.click_unpicked);
+                $(".selected-topics")
+                    .find(".topic-suggestion")
+                    .click(self.click_picked);
             }
-            // self.topics.push.apply(topics);
 
-            // attach event handlers to topic objects
-            self.render();
-            $(".topic-suggestions").find(".topic-suggestion")
-                .click(self.click_unpicked);
-            $(".selected-topics").find(".topic-suggestion")
-                .click(self.click_picked);
+            $.get('topics', handleResponse);
         };
 
         self.pick = function () {

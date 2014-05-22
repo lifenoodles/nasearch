@@ -4,5 +4,6 @@ from shownotes import views
 urlpatterns = patterns(
     '',
     url(r'^$', views.index),
-    url(r'^search$', views.search_topics)
+    url(r'^search$', views.search_topics),
+    url(r'^topics$', views.topics)
 )
