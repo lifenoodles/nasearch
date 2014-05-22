@@ -14,6 +14,9 @@
     <script id="topic-list-template" type="text/html">
             {% include "mustache/topic-popup.html" %}
     </script>
+    <script id="topic-selected-template" type="text/html">
+            {% include "mustache/topic-selected.html" %}
+    </script>
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-static-top" role="navigation">
@@ -43,7 +46,7 @@
         </div>
         <div class="row">
             <div class="selected-topics">
-                <span class="topic-suggestion fake-suggestion invisible">topic1</span>
+                <span class="topic-suggestion fake-suggestion invisible">Topic</span>
             </div>
         </div>
     </div>
