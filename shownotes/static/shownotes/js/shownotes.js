@@ -16,9 +16,9 @@
             var text = $(this).html().trim(),
                 topic = self.topics[text],
                 id = topic.id;
-            // topic.on = false;
             $(this).hide();
-            $(".selected-topics").find("#topic" + id).toggle();
+            $(this).addClass('picked');
+            $(".selected-topics").find("#topic" + id).show();
             console.log($(".selected-topics")
                 .find("#topic" + id).length);
             event.stopPropagation();
@@ -28,10 +28,9 @@
             var text = $(this).html().trim(),
                 topic = self.topics[text],
                 id = topic.id;
-            // topic.on = true;
             $(this).hide();
             $(".topic-suggestions").find("#topic" + id)
-                .toggle();
+                .show().removeClass('picked');
             event.stopPropagation();
         };
 
@@ -70,15 +69,22 @@
             $.get('topics', handleResponse);
         };
 
-        self.pick = function () {
-            return null;
-        };
-
-        self.unpick = function () {
-            return null;
-        };
-
         // register event handlers
+        $("#topic-field").keyup(function (event) {
+            var string = $(this).val().toLowerCase();
+            $(".topic-suggestions .topic-suggestion").each(
+                function () {
+                    var text = $(this).html().toLowerCase();
+                    if (!$(this).hasClass('picked')) {
+                        if (text.indexOf(string) !== -1) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    }
+                }
+            );
+        });
 
         // initialise data and render
         self.getTopics();

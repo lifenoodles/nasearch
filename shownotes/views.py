@@ -48,7 +48,7 @@ def search_topics(request):
 def topics(request):
     response = {}
     topics = Note.objects.values('topic').distinct()
-    topics = [{'text': t['topic'].strip(), 'id': i}
+    topics = [{'text': t['topic'], 'id': i}
               for t, i in zip(topics, range(len(topics)))]
     topics.sort(key=lambda x: x['text'])
     return HttpResponse(json.dumps(topics),
