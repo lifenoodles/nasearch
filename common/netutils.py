@@ -1,5 +1,6 @@
 import requests
 import feedparser
+from bs4 import BeautifulSoup
 
 
 def get_pages(*urls):

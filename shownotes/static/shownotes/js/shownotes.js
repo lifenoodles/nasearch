@@ -70,6 +70,7 @@
         };
 
         // register event handlers
+        /*jslint unparam: true*/
         $("#topic-field").keyup(function (event) {
             var string = $(this).val().toLowerCase();
             $(".topic-suggestions .topic-suggestion").each(
