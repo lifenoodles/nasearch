@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 
 class Show(models.Model):
@@ -7,16 +8,31 @@ class Show(models.Model):
     last_updated = models.DateTimeField()
 
     def __unicode__(self):
-        return '{}: {}'.format(self.id, self.name)
+        return u'{}: {}'.format(self.id, self.name)
+
+
+class Topic(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.name
+
+    @classmethod
+    def get_by_id(cls, *ids):
+        if len(ids) == 0:
+            return []
+        qs = [Q(id=x) for x in ids]
+        query = reduce(lambda x, y: x | y, qs)
+        return Topic.objects.filter(query)
 
 
 class Note(models.Model):
     show = models.ForeignKey(Show)
-    topic = models.CharField(max_length=100)
+    topic = models.ForeignKey(Topic)
     title = models.TextField()
 
     def __unicode__(self):
-        return '{} [{}]: {}'.format(
+        return u'{} [{}]: {}'.format(
             self.topic, self.show.id, self.title[:20])
 
     @classmethod
@@ -32,7 +48,7 @@ class TextEntry(models.Model):
         return self.text.replace('\n', '<br>')
 
     def __unicode__(self):
-        return '{}: {}'.format('text', self.text[:20])
+        return u'{}: {}'.format('text', self.text[:20])
 
     @classmethod
     def get_by_note(cls, note):
@@ -45,10 +61,10 @@ class UrlEntry(models.Model):
     url = models.TextField()
 
     def link(self):
-        return '<a href={}>{}</a>'.format(self.url, self.url)
+        return u'<a href={}>{}</a>'.format(self.url, self.url)
 
     def __unicode__(self):
-        return '{}: {}'.format('url', self.text[:20])
+        return u'{}: {}'.format('url', self.text[:20])
 
     @classmethod
     def get_by_note(cls, note):

@@ -1,7 +1,7 @@
 import opml
 import common.netutils as netutils
 from datetime import datetime
-from shownotes.models import Show, Note, TextEntry, UrlEntry
+from shownotes.models import Show, Note, TextEntry, UrlEntry, Topic
 
 
 def opml_from_shownotes(*urls):
@@ -77,31 +77,40 @@ class OpmlLoader(object):
                 return v
         raise ValueError('No Shownotes Found')
 
+    def _get_topic(self, name):
+        if not Topic.objects.filter(name=name).exists():
+            topic = Topic(name=name)
+            topic.save()
+        else:
+            topic = Topic.objects.get(name=name)
+        return topic
+
     def _insert_entries(self):
         assert self.exists()
         show = Show.objects.get(pk=self.number)
         shownotes = self._get_shownotes()
-        for topic in shownotes:
-            if len(topic) == 0:
+        for topic_line in shownotes:
+            if len(topic_line) == 0:
                 continue
-            topic_name = topic.text
-            for note in topic:
+            topic_name = topic_line.text.strip()
+            topic = self._get_topic(topic_name)
+            for note in topic_line:
                 if len(note) == 0:
                     continue
                 new_note = Note(
-                    show=show, topic=topic_name,
-                    title=note.text)
+                    show=show, topic=topic,
+                    title=note.text.strip())
                 new_note.save()
                 full_text = []
                 for entry in note:
                     if hasattr(entry, 'type'):
                         new_entry = UrlEntry(
                             note=new_note,
-                            text=entry.text,
+                            text=entry.text.strip(),
                             url=entry.url)
                         new_entry.save()
                     else:
-                        full_text.append(entry.text)
+                        full_text.append(entry.text.strip())
                 new_entry = TextEntry(
                     note=new_note, text='\n'.join(full_text))
                 new_entry.save()
