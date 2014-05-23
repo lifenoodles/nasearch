@@ -3,3 +3,4 @@ requests>=2.2.1
 opml>=0.5
 feedparser>=5.12
 django-haystack>=2.1.0
+whoosh>=2.6.0

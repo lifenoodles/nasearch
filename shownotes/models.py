@@ -44,7 +44,7 @@ class TextEntry(models.Model):
     note = models.ForeignKey(Note)
     text = models.TextField()
 
-    def text_web(self):
+    def text_html(self):
         return self.text.replace('\n', '<br>')
 
     def __unicode__(self):

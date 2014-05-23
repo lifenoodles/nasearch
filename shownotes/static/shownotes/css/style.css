@@ -96,3 +96,7 @@ li {
 .right {
     float: right;
 }
+
+.highlighted {
+    font-weight: bold;
+}
