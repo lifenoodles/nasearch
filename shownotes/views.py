@@ -9,7 +9,7 @@ import json
 import re
 
 
-TOPIC_SEARCH_LIMIT = 2
+TOPIC_SEARCH_LIMIT = 10
 RESULTS_SEARCH_LIMIT = 5
 
 
