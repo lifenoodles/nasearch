@@ -13,21 +13,15 @@
         self.topics = {};
 
         self.click_unpicked = function (event) {
-            var text = $(this).html().trim(),
-                topic = self.topics[text],
-                id = topic.id;
+            var id = self.topics[$(this).attr("data-id")].id;
             $(this).hide();
             $(this).addClass('picked');
             $(".selected-topics").find("#topic" + id).show();
-            console.log($(".selected-topics")
-                .find("#topic" + id).length);
             event.stopPropagation();
         };
 
         self.click_picked = function (event) {
-            var text = $(this).html().trim(),
-                topic = self.topics[text],
-                id = topic.id;
+            var id = self.topics[$(this).attr("data-id")].id;
             $(this).hide();
             $(".topic-suggestions").find("#topic" + id)
                 .show().removeClass('picked');
@@ -44,6 +38,15 @@
             );
         };
 
+        self.selectedTopics = function () {
+            var topics = [];
+            $(".topic-suggestions .picked").each(function () {
+                var id = self.topics[$(this).attr("data-id")].id;
+                topics.push(id);
+            });
+            return topics;
+        };
+
         self.getTopics = function () {
             function handleResponse(response) {
                 var i,
@@ -54,7 +57,7 @@
                 };
 
                 for (i = 0; i < topics.length; i += 1) {
-                    self.topics[topics[i].text] = topics[i];
+                    self.topics[topics[i].id] = topics[i];
                 }
 
                 self.render();
@@ -92,13 +95,14 @@
     }
 
     $(document).ready(function () {
-        Mustache.tags = ["[[", "]]"];
         var topicPopupView = new TopicPopupView();
+        Mustache.tags = ["[[", "]]"];
 
         function search() {
             $.get(
                 'search',
-                {"string": $("#search-field").val()},
+                {"string": $("#search-field").val(),
+                    "topics": topicPopupView.selectedTopics().join(" ")},
                 function (response) {
                     $("#content").html("");
                     $("#content").append(response);

@@ -1,8 +1,11 @@
-from models import Note, UrlEntry, TextEntry
+from models import Note, UrlEntry, TextEntry, Topic
 from django.shortcuts import render
 from collections import defaultdict
 from django.http import HttpResponse
 import json
+
+
+TOPIC_SEARCH_LIMIT = 2
 
 
 def index(request):
@@ -10,9 +13,20 @@ def index(request):
 
 
 def search_topics(request):
-    if 'string' in request.GET:
-        notes = Note.get_by_topic(
-            request.GET['string']).order_by('-show')
+    if 'string' in request.GET and 'topics' in request.GET:
+        topic_ids = [int(t) for t in request.GET['topics'].split()]
+        topics = Topic.get_by_id(*topic_ids).order_by('name')
+
+        notes = []
+        for topic in topics:
+            notes += (Note.get_by_topic(topic)).order_by('-show')
+
+        if len(notes) == 0:
+            return render(request, 'shownotes/empty-topic.html')
+
+        context = {}
+        if len(notes) > TOPIC_SEARCH_LIMIT:
+            context['limit'] = TOPIC_SEARCH_LIMIT
 
         # map entries to notes
         note_map = defaultdict(list)
@@ -38,7 +52,7 @@ def search_topics(request):
         show_notes.sort(reverse=True,
                         key=lambda (x, _): x.id)
 
-        context = {'show_notes': show_notes}
+        context['show_notes'] = show_notes
         return render(
             request, 'shownotes/topic-list.html', context)
     else:
@@ -47,9 +61,8 @@ def search_topics(request):
 
 def topics(request):
     response = {}
-    topics = Note.objects.values('topic').distinct()
-    topics = [{'text': t['topic'], 'id': i}
-              for t, i in zip(topics, range(len(topics)))]
+    topics = Topic.objects.all()
+    topics = [{'text': t.name, 'id': t.id} for t in topics]
     topics.sort(key=lambda x: x['text'])
     return HttpResponse(json.dumps(topics),
                         content_type='application/json')

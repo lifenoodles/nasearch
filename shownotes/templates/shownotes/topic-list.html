@@ -1,3 +1,4 @@
+{% include "topic-size-warning.html" %}
 <div>
 <ul class="list-unstyled">
 {% autoescape off %}
@@ -10,7 +11,7 @@
     <div class="shownote-heading-div bg-info">
     <li class="shownote-heading pointer">{{ note.title }}
     <span class="caret"></span>
-    <span class="right">{{ note.topic }}</span></li>
+    <span class="right">{{ note.topic.name }}</span></li>
     </div>
     <div class="not-visible bg-grey shownote-entries">
     <ul class="list-unstyled icon-list chevron-right">
