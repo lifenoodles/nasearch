@@ -121,19 +121,31 @@
     }
 
     $(document).ready(function () {
-        var topicPopupView = new TopicPopupView();
+        var page = 0,
+            payload = {},
+            topicPopupView = new TopicPopupView();
         Mustache.tags = ["[[", "]]"];
 
+        function nextPage() {
+            page += 1;
+            payload.page = page;
+            $.get('search', payload,
+                function (response) {
+                    $("#content").append(response);
+                });
+        }
+
         function search() {
-            $.get(
-                'search',
-                {"string": $("#search-field").val(),
-                    "topics": topicPopupView.selectedTopics().join(" ")},
+            page = 1;
+            payload = {"string": $("#search-field").val(),
+                "topics": topicPopupView.selectedTopics().join(" "),
+                "page": page};
+
+            $.get('search', payload,
                 function (response) {
                     $("#content").html("");
                     $("#content").append(response);
-                }
-            );
+                });
         }
 
         $("#content").on("click", ".shownote-heading-div",
@@ -168,6 +180,14 @@
         $("#search-field").keypress(function (e) {
             if (e.which === 13) {
                 search();
+            }
+        });
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() ===
+                    $(document).height() - $(window).height()
+                    && page > 0) {
+                nextPage();
             }
         });
     });

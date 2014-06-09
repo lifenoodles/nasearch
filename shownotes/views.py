@@ -1,6 +1,7 @@
 from models import Topic
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from haystack.query import SearchQuerySet, SQ
 from haystack.inputs import AutoQuery
 from haystack.utils import Highlighter
@@ -9,7 +10,7 @@ import re
 
 
 TOPIC_SEARCH_LIMIT = 10
-RESULTS_SEARCH_LIMIT = 5
+RESULTS_SEARCH_LIMIT = 20
 
 
 class HtmlHighlighter(Highlighter):
@@ -31,7 +32,9 @@ def index(request):
 
 
 def search_topics(request):
-    if 'string' in request.GET and 'topics' in request.GET:
+    if 'string' in request.GET \
+            and 'topics' in request.GET \
+            and 'page' in request.GET:
         results = []
         topic_ids = [int(t) for t in request.GET['topics'].split()]
         context = {}
@@ -50,6 +53,14 @@ def search_topics(request):
             results = SearchQuerySet().filter(topic_id__in=topic_ids) \
                 .filter(SQ(text=AutoQuery(query)) |
                         SQ(text_entry=AutoQuery(query)))
+
+        paginator = Paginator(results, RESULTS_SEARCH_LIMIT)
+        try:
+            results = paginator.page(request.GET['page'])
+        except PageNotAnInteger:
+            results = paginator.page(1)
+        except EmptyPage:
+            results = []
 
         context['results'] = results
         return render(
