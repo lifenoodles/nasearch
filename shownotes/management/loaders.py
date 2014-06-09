@@ -112,5 +112,5 @@ class OpmlLoader(object):
                     else:
                         full_text.append(entry.text.strip())
                 new_entry = TextEntry(
-                    note=new_note, text='\n'.join(full_text))
+                    note=new_note, text='<br>'.join(full_text))
                 new_entry.save()
