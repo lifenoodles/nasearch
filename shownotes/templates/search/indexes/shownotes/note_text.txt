@@ -1,3 +1,2 @@
-{{ object.topic_name }}
 {{ object.title }}
 {{ object.text_entry }}

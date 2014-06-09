@@ -50,7 +50,7 @@ def search_topics(request):
             query = request.GET['string']
             results = SearchQuerySet().filter(topic_id__in=topic_ids) \
                 .filter(SQ(text=AutoQuery(query)) |
-                        SQ(note_title=AutoQuery(query)))
+                        SQ(text_entry=AutoQuery(query)))
 
         if results.count() > RESULTS_SEARCH_LIMIT:
             context['results_limit'] = RESULTS_SEARCH_LIMIT

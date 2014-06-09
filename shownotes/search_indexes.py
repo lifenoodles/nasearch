@@ -4,7 +4,7 @@ from shownotes.models import TextEntry, Note, UrlEntry
 
 class NoteIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-    text_entry = indexes.CharField()
+    text_entry = indexes.CharField(indexed=True)
     url_entries = indexes.MultiValueField(indexed=False)
     topic_id = indexes.IntegerField(model_attr='topic__id')
     topic_name = indexes.CharField(model_attr='topic__name')
