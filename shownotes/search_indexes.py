@@ -1,15 +1,23 @@
 from haystack import indexes
-from shownotes.models import TextEntry
+from shownotes.models import TextEntry, Note, UrlEntry
 
 
-class TextEntryIndex(indexes.SearchIndex, indexes.Indexable):
+class NoteIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-    note_title = indexes.CharField(model_attr='note__title')
-    topic_id = indexes.IntegerField(model_attr='note__topic__id')
+    text_entry = indexes.CharField()
+    url_entries = indexes.MultiValueField(indexed=False)
+    topic_id = indexes.IntegerField(model_attr='topic__id')
+    topic_name = indexes.CharField(model_attr='topic__name')
 
     def get_model(self):
-        return TextEntry
+        return Note
 
     def index_queryset(self, using=None):
-        return self.get_model().objects.all() \
-            .select_related('note').select_related('topic')
+        return self.get_model().objects.all()
+
+    def prepare_text_entry(self, obj):
+        return ''.join(
+            [t.text for t in TextEntry.objects.filter(note=obj)])
+
+    def prepare_url_entries(self, obj):
+        return [t.url for t in UrlEntry.objects.filter(note=obj)]

@@ -33,6 +33,7 @@ def index(request):
 
 def search_topics(request):
     if 'string' in request.GET and 'topics' in request.GET:
+        # request.GET['string'] = request.GET['string'].strip()
         results = []
         topic_ids = [int(t) for t in request.GET['topics'].split()]
         context = {}
@@ -54,34 +55,10 @@ def search_topics(request):
         if results.count() > RESULTS_SEARCH_LIMIT:
             context['results_limit'] = RESULTS_SEARCH_LIMIT
 
-        results.load_all()
-
-        # map entries to notes
-        note_map = defaultdict(list)
-        notes = set([x.object.note for x in results])
-        for note in notes:
-            url_entries = UrlEntry.get_by_note(note)
-            for url in url_entries:
-                note_map[note].append(url.link())
         for result in results:
-            note_map[result.object.note].append(
-                result.object.text_html())
+            print result
 
-        # map notes to shows
-        show_map = defaultdict(list)
-        for note in notes:
-            show_map[note.show].append(note)
-
-        # build tuples for templating
-        show_notes = []
-        for s, ns in show_map.items():
-            note_entries = [(n, note_map[n]) for n in ns]
-            show_notes.append((s, note_entries))
-
-        show_notes.sort(reverse=True,
-                        key=lambda (x, _): x.id)
-
-        context['show_notes'] = show_notes
+        context['results'] = results
         return render(
             request, 'shownotes/topic-list.html', context)
     else:

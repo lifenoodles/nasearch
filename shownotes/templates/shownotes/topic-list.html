@@ -2,25 +2,24 @@
 <div>
 <ul class="list-unstyled">
 {% autoescape off %}
-{% for show, notes_entries in show_notes %}
-<li><h4 class="show-title">{{ show.name }}</h4></li>
+{% for result in results %}
+<!-- <li><h4 class="show-title">{{ show.name }}</h4></li> -->
 <div>
 
-    {% for note, entries in notes_entries %}
 
-    <div class="shownote-heading-div bg-info">
-    <li class="shownote-heading pointer">{{ note.title }}
-    <span class="caret"></span>
-    <span class="right">{{ note.topic.name }}</span></li>
-    </div>
-    <div class="not-visible bg-grey shownote-entries">
-    <ul class="list-unstyled icon-list chevron-right">
-        {% for entry in entries %}
-            <li>{{ entry }}</li>
-        {% endfor %}
-    </ul>
-    </div>
+<div class="shownote-heading-div bg-info">
+<li class="shownote-heading pointer">{{ result.text }}
+<span class="caret"></span>
+<span class="right">{{ result.topic_name }}</span></li>
+</div>
+<div class="not-visible bg-grey shownote-entries">
+<ul class="list-unstyled icon-list chevron-right">
+    {% for entry in result.url_entries %}
+        <li><a href={{ entry }}>{{ entry }}</a></li>
     {% endfor %}
+    <li>{{ result.text_entry }}</li>
+</ul>
+</div>
 
 </div>
 {% endfor %}
