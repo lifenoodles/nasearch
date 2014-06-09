@@ -4,6 +4,20 @@
 (function () {
     "use strict";
 
+    function fuzzyMatch(pattern, text) {
+        var pi = 0, ti = 0;
+        while (pi < pattern.length && ti < text.length) {
+            if (pattern.charAt(pi) === text.charAt(ti)) {
+                pi += 1;
+            }
+            ti += 1;
+        }
+        if (pi === pattern.length) {
+            return true;
+        }
+        return false;
+    }
+
     function TopicPopupView() {
         var self = this;
         self.template = $('#topic-list-template').html();
@@ -80,7 +94,7 @@
                 function () {
                     var text = $(this).html().toLowerCase();
                     if (!$(this).hasClass('picked')) {
-                        if (text.indexOf(string) !== -1) {
+                        if (fuzzyMatch(string, text)) {
                             $(this).show();
                         } else {
                             $(this).hide();
