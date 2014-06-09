@@ -18,6 +18,12 @@
         return false;
     }
 
+    function openDropDown() {
+        if (!$("#top-input").hasClass("open")) {
+            $(".topic-dropdown").dropdown("toggle");
+        }
+    }
+
     function TopicPopupView() {
         var self = this;
         self.template = $('#topic-list-template').html();
@@ -63,8 +69,7 @@
 
         self.getTopics = function () {
             function handleResponse(response) {
-                var i,
-                    topics = response;
+                var i, topics = response;
 
                 self.view = {
                     topics: topics
@@ -89,19 +94,26 @@
         // register event handlers
         /*jslint unparam: true*/
         $("#topic-field").keyup(function (event) {
-            var string = $(this).val().toLowerCase();
+            var visibleCount = 0,
+                string = $(this).val().toLowerCase();
             $(".topic-suggestions .topic-suggestion").each(
                 function () {
                     var text = $(this).html().toLowerCase();
                     if (!$(this).hasClass('picked')) {
                         if (fuzzyMatch(string, text)) {
                             $(this).show();
+                            visibleCount += 1;
                         } else {
                             $(this).hide();
                         }
                     }
                 }
             );
+            if (visibleCount === 0) {
+                $("#no-topics-text").show();
+            } else {
+                $("#no-topics-text").hide();
+            }
         });
 
         // initialise data and render
@@ -142,6 +154,16 @@
             });
 
         $("#search-button").click(search);
+
+        $("#topic-field").click(function (e) {
+            e.stopPropagation();
+            openDropDown();
+        });
+
+        $("#topic-field").focusin(function (e) {
+            e.stopPropagation();
+            openDropDown();
+        });
 
         $("#search-field").keypress(function (e) {
             if (e.which === 13) {

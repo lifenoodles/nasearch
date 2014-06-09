@@ -1,3 +1,7 @@
+.padded {
+  margin: 4px;
+}
+
 .pointer {
     cursor: pointer;
 }
