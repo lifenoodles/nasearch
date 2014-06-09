@@ -3,12 +3,9 @@
 <ul class="list-unstyled">
 {% autoescape off %}
 {% for result in results %}
-<!-- <li><h4 class="show-title">{{ show.name }}</h4></li> -->
 <div>
-
-
 <div class="shownote-heading-div bg-info">
-<li class="shownote-heading pointer">{{ result.text }}
+<li class="shownote-heading pointer">[{{ result.show_number }}] {{ result.text }}
 <span class="caret"></span>
 <span class="right">{{ result.topic_name }}</span></li>
 </div>

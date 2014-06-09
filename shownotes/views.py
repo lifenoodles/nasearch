@@ -1,9 +1,8 @@
-from models import Note, UrlEntry, TextEntry, Topic
+from models import Topic
 from django.shortcuts import render
-from collections import defaultdict
 from django.http import HttpResponse
 from haystack.query import SearchQuerySet, SQ
-from haystack.inputs import AutoQuery, Exact
+from haystack.inputs import AutoQuery
 from haystack.utils import Highlighter
 import json
 import re
@@ -33,7 +32,6 @@ def index(request):
 
 def search_topics(request):
     if 'string' in request.GET and 'topics' in request.GET:
-        # request.GET['string'] = request.GET['string'].strip()
         results = []
         topic_ids = [int(t) for t in request.GET['topics'].split()]
         context = {}
@@ -45,18 +43,13 @@ def search_topics(request):
         if request.GET['string'] == '':
             if len(topic_ids) == 0:
                 return render(request, 'shownotes/empty-topic.html')
-            results = SearchQuerySet().filter(topic_id__in=topic_ids)
+            results = SearchQuerySet().filter(topic_id__in=topic_ids) \
+                .order_by('-show_number')
         else:
             query = request.GET['string']
             results = SearchQuerySet().filter(topic_id__in=topic_ids) \
                 .filter(SQ(text=AutoQuery(query)) |
                         SQ(text_entry=AutoQuery(query)))
-
-        if results.count() > RESULTS_SEARCH_LIMIT:
-            context['results_limit'] = RESULTS_SEARCH_LIMIT
-
-        for result in results:
-            print result
 
         context['results'] = results
         return render(
@@ -66,7 +59,6 @@ def search_topics(request):
 
 
 def topics(request):
-    response = {}
     topics = Topic.objects.all()
     topics = [{'text': t.name, 'id': t.id} for t in topics]
     topics.sort(key=lambda x: x['text'])
