@@ -64,7 +64,7 @@ def search_topics(request):
         response_dict['page_count'] = paginator.num_pages
         try:
             results = paginator.page(request.GET['page'])
-            response_dict['page'] = request.GET['page']
+            response_dict['page'] = int(request.GET['page'])
         except PageNotAnInteger:
             results = paginator.page(1)
             response_dict['page'] = 1
