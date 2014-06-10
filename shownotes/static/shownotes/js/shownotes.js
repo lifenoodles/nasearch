@@ -91,9 +91,7 @@
             $.get('topics', handleResponse);
         };
 
-        // register event handlers
-        /*jslint unparam: true*/
-        $("#topic-field").keyup(function (event) {
+        self.filterList = function () {
             var visibleCount = 0,
                 string = $(this).val().toLowerCase();
             $(".topic-suggestions .topic-suggestion").each(
@@ -114,7 +112,11 @@
             } else {
                 $("#no-topics-text").hide();
             }
-        });
+        };
+
+        // register event handlers
+        $("#topic-field").click(self.filterList);
+        $("#topic-field").keyup(self.filterList);
 
         // initialise data and render
         self.getTopics();
