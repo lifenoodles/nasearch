@@ -2,6 +2,13 @@ import opml
 import common.netutils as netutils
 from datetime import datetime
 from shownotes.models import Show, Note, TextEntry, UrlEntry, Topic
+import re
+
+
+def strip_4_bytes(string):
+    re_pattern = re.compile(
+        u'[^\u0000-\uD7FF\uE000-\uFFFF]', re.UNICODE)
+    return re_pattern.sub(u'\uFFFD', string)
 
 
 def opml_from_shownotes(*urls):
@@ -68,18 +75,25 @@ class OpmlLoader(object):
         assert not self.exists()
         show = Show(name=self.title, id=self.number,
                     last_updated=self.date_modified())
+        show.name = strip_4_bytes(show.name)
         show.save()
         assert self.exists()
 
     def _get_shownotes(self):
-        for v in self.data[1]:
-            if v.text == 'Shownotes':
-                return v
-        raise ValueError('No Shownotes Found')
+        stack = [self.data]
+        while len(stack) > 0:
+            data = stack.pop()
+            for v in data:
+                if v.text == 'Shownotes':
+                    return v
+                elif len(v) > 0:
+                    stack.append(v)
+        raise ValueError('No shownotes found')
 
     def _get_topic(self, name):
         if not Topic.objects.filter(name=name).exists():
             topic = Topic(name=name)
+            topic.name = strip_4_bytes(topic.name)
             topic.save()
         else:
             topic = Topic.objects.get(name=name)
@@ -100,6 +114,7 @@ class OpmlLoader(object):
                 new_note = Note(
                     show=show, topic=topic,
                     title=note.text.strip())
+                new_note.title = strip_4_bytes(new_note.title)
                 new_note.save()
                 full_text = []
                 for entry in note:
@@ -108,9 +123,11 @@ class OpmlLoader(object):
                             note=new_note,
                             text=entry.text.strip(),
                             url=entry.url)
+                        new_entry.url = strip_4_bytes(new_entry.url)
                         new_entry.save()
                     else:
                         full_text.append(entry.text.strip())
                 new_entry = TextEntry(
-                    note=new_note, text='<br>'.join(full_text))
+                    note=new_note, text=u'<br>'.join(full_text))
+                new_entry.text = strip_4_bytes(new_entry.text)
                 new_entry.save()
