@@ -14,20 +14,6 @@ TOPIC_SEARCH_LIMIT = 10
 RESULTS_SEARCH_LIMIT = 20
 
 
-class HtmlHighlighter(Highlighter):
-    def render_html(self, highlight_locations=None,
-                    start_offset=None, end_offset=None):
-        print highlight_locations
-        highlighted_chunk = self.text_block
-        for word in self.query_words:
-            print word
-            pattern = re.compile(word, re.IGNORECASE)
-            highlighted_chunk = pattern.sub(
-                '<span class="highlighted">{}</span>'.format(word),
-                highlighted_chunk)
-        return highlighted_chunk
-
-
 def index(request):
     return render(request, 'shownotes/index.html')
 
@@ -60,6 +46,7 @@ def search_topics(request):
                 .filter(SQ(text=AutoQuery(query)) |
                         SQ(text_entry=AutoQuery(query)))
 
+        context['matches'] = len(results)
         paginator = Paginator(results, RESULTS_SEARCH_LIMIT)
         response_dict['page_count'] = paginator.num_pages
         try:
