@@ -1,5 +1,6 @@
 from models import Topic
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from haystack.query import SearchQuerySet, SQ
@@ -38,6 +39,7 @@ def search_topics(request):
         results = []
         topic_ids = [int(t) for t in request.GET['topics'].split()]
         context = {}
+        response_dict = {'page': 0, 'page_count': 0}
 
         if len(topic_ids) > TOPIC_SEARCH_LIMIT:
             context['limit'] = TOPIC_SEARCH_LIMIT
@@ -45,7 +47,11 @@ def search_topics(request):
 
         if request.GET['string'] == '':
             if len(topic_ids) == 0:
-                return render(request, 'shownotes/empty-topic.html')
+                response_dict['html'] = render_to_string(
+                    'shownotes/empty-topic.html')
+                return HttpResponse(json.dumps(response_dict),
+                                    content_type='application/json')
+
             results = SearchQuerySet().filter(topic_id__in=topic_ids) \
                 .order_by('-show_number').order_by('topic_name')
         else:
@@ -55,22 +61,33 @@ def search_topics(request):
                         SQ(text_entry=AutoQuery(query)))
 
         paginator = Paginator(results, RESULTS_SEARCH_LIMIT)
+        response_dict['page_count'] = paginator.num_pages
         try:
             results = paginator.page(request.GET['page'])
+            response_dict['page'] = request.GET['page']
         except PageNotAnInteger:
             results = paginator.page(1)
+            response_dict['page'] = 1
         except EmptyPage:
             results = []
+            response_dict['page'] = paginator.num_pages
 
         context['results'] = results
         if request.GET['page'] == '1':
-            return render(
-                request, 'shownotes/topic-container.html', context)
+            response_dict['html'] = render_to_string(
+                'shownotes/topic-container.html', context)
         else:
-            return render(
-                request, 'shownotes/topic-list.html', context)
+            response_dict['html'] = render_to_string(
+                'shownotes/topic-list.html', context)
+        return HttpResponse(json.dumps(response_dict),
+                            content_type='application/json')
     else:
-        return render(request, 'shownotes/topic-container.html')
+        html = render_to_string(
+            'shownotes/topic-container.html')
+        return HttpResponse(json.dumps({'page': '0',
+                                        'page_count': '0',
+                                        'html': html}),
+                            content_type='application/json')
 
 
 def topics(request):

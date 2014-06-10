@@ -123,20 +123,50 @@
     $(document).ready(function () {
         var page = 0,
             payload = {},
+            loadComplete = false,
             topicPopupView = new TopicPopupView();
         Mustache.tags = ["[[", "]]"];
 
+        function handlePageResponse(page, pageCount) {
+            $("#load-button").text("Load More");
+            $("#search-button").text("Search");
+            if (page === pageCount) {
+                loadComplete = true;
+                $("#load-button").hide();
+            } else {
+                $("#load-button").show();
+            }
+        }
+
+        function startSearch() {
+            page = 1;
+            loadComplete = false;
+            $("#search-button").text("Searching...");
+        }
+
+        function startLoadingNotes() {
+            $("#load-button").show();
+            $("#load-button").text("Loading...");
+        }
+
         function nextPage() {
+            if (loadComplete) {
+                return false;
+            }
+            startLoadingNotes();
             page += 1;
             payload.page = page;
             $.get('search', payload,
                 function (response) {
-                    $("#content").append(response);
+                    $("#content").append(response.html);
+                    handlePageResponse(response.page,
+                        response.page_count);
                 });
         }
 
         function search() {
-            page = 1;
+            startSearch();
+            startLoadingNotes();
             payload = {"string": $("#search-field").val(),
                 "topics": topicPopupView.selectedTopics().join(" "),
                 "page": page};
@@ -144,7 +174,9 @@
             $.get('search', payload,
                 function (response) {
                     $("#content").html("");
-                    $("#content").append(response);
+                    $("#content").append(response.html);
+                    handlePageResponse(response.page,
+                        response.page_count);
                 });
         }
 
@@ -181,6 +213,10 @@
             if (e.which === 13) {
                 search();
             }
+        });
+
+        $("#load-button").click(function () {
+            nextPage();
         });
 
         $(window).scroll(function () {
