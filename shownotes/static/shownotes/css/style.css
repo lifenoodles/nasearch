@@ -46,6 +46,9 @@ li {
   right: auto;
   left: auto;
   max-width: 65%;
+}
+
+.topic-data {
   max-height: 400px;
   overflow: scroll;
 }
