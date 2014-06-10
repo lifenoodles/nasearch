@@ -46,6 +46,8 @@ li {
   right: auto;
   left: auto;
   max-width: 65%;
+  max-height: 400px;
+  overflow: scroll;
 }
 
 .topic-suggestion {
