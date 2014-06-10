@@ -1,14 +1,14 @@
 {% if results %}
-{% include "topic-size-warning.html" %}
-<div>
 <ul class="list-unstyled">
 {% autoescape off %}
 {% for result in results %}
 <div>
 <div class="shownote-heading-div bg-info">
-<li class="shownote-heading pointer">[{{ result.show_number }}] {{ result.text }}
-<span class="caret"></span>
-<span class="right">{{ result.topic_name }}</span></li>
+<li class="shownote-heading pointer">
+<div class="row">
+<div class="col-md-10"><span class="caret"></span>[{{ result.show_number }}] {{ result.text }}</div><div class="col-md-2 text-right">{{ result.topic_name }}</div>
+</div>
+</li>
 </div>
 <div class="not-visible bg-grey shownote-entries">
 <ul class="list-unstyled icon-list chevron-right">
@@ -23,5 +23,4 @@
 {% endfor %}
 {% endautoescape %}
 </ul>
-</div>
 {% endif %}

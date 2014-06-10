@@ -47,7 +47,7 @@ def search_topics(request):
             if len(topic_ids) == 0:
                 return render(request, 'shownotes/empty-topic.html')
             results = SearchQuerySet().filter(topic_id__in=topic_ids) \
-                .order_by('-show_number')
+                .order_by('-show_number').order_by('topic_name')
         else:
             query = request.GET['string']
             results = SearchQuerySet().filter(topic_id__in=topic_ids) \
@@ -63,10 +63,14 @@ def search_topics(request):
             results = []
 
         context['results'] = results
-        return render(
-            request, 'shownotes/topic-list.html', context)
+        if request.GET['page'] == '1':
+            return render(
+                request, 'shownotes/topic-container.html', context)
+        else:
+            return render(
+                request, 'shownotes/topic-list.html', context)
     else:
-        return render(request, 'shownotes/topic-list.html')
+        return render(request, 'shownotes/topic-container.html')
 
 
 def topics(request):

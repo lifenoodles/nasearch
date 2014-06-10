@@ -1,3 +1,7 @@
+.caret {
+  margin-right: 6px;
+}
+
 .padded {
   margin: 6px;
 }
@@ -47,10 +51,6 @@ li {
 .topic-suggestion {
   margin: 5px;
   padding: 2px 5px;
-  /*background-color: #B6E6E6;
-  border-color: #B6E6E6;
-  border-style: solid;
-  border-width: 1px;*/
   border-radius: 5px;
   float: left;
   cursor: pointer;
@@ -67,15 +67,6 @@ li {
 
 .bg-primary a {
     color: orange;
-}
-
-/* overriding typeahead */
-.twitter-typeahead {
-    width: 100% !important;
-}
-
-.typeahead {
-    float: none !important;
 }
 
 /* styles for icons in lists */
