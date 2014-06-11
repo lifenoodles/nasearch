@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-rsync -rv --relative \
+rsync -rv --relative -e "ssh -i /home/donagh/.ssh/server.pem" \
 --exclude "*.pyc" \
 --exclude "whoosh_index" \
 --exclude "cleaned_settings.py" \
@@ -11,5 +11,5 @@ rsync -rv --relative \
 --exclude "*.opml" \
 --exclude "*.fuse*" \
 --exclude "*.sublime-*" \
-. "$1":~/www/noagendadb/
+. "$1":~/venv/noagenda-db/noagenda-db/
 
