@@ -1,3 +1,0 @@
-libmysqlclient-dev
-libxslt1-dev
-python-dev
