@@ -18,11 +18,11 @@ class Command(BaseCommand):
         # visit opml for each link pointed to
         for opml in opmls:
             self.stdout.write('Loading {}'.format(opml))
-            # try:
-            loader = loaders.OpmlLoader(opml)
-            loader.save()
-            self.stdout.write('opml parsed for episode {}'
-                              .format(loader.number))
-            # except Exception as e:
-            #     self.stdout.write('Error occured while loading opml: {}'
-            #                       .format(e))
+            try:
+                loader = loaders.OpmlLoader(opml)
+                loader.save()
+                self.stdout.write('opml parsed for episode {}'
+                                  .format(loader.number))
+            except Exception as e:
+                self.stdout.write('Error occured while loading opml: {}'
+                                  .format(e))
