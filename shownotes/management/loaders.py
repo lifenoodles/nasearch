@@ -4,6 +4,8 @@ from datetime import datetime
 from shownotes.models import Show, Note, TextEntry, UrlEntry, Topic
 import re
 
+number_pattern = re.compile('(\d+)')
+
 
 def strip_4_bytes(string):
     re_pattern = re.compile(
@@ -36,6 +38,7 @@ class OpmlLoader(object):
             self.number = self._show_number()
             # we need an explicit copy here so we get the unicode str
             self.title = self.data.title[:]
+            self.shownotes = self._get_shownotes()
         except ValueError:
             raise ValueError('Bad opml data, no show number')
 
@@ -60,11 +63,10 @@ class OpmlLoader(object):
         return Show.objects.filter(pk=self.number).count() == 1
 
     def _show_number(self):
-        numbers = self.data.title.split()
-        numbers = filter(lambda x: x.isdigit(), numbers)
-        if len(numbers) == 0:
-            raise ValueError
-        return int(numbers[0])
+        match = number_pattern.search(self.data.title[:])
+        if match:
+            return int(match.group())
+        raise ValueError
 
     def _delete_show(self):
         assert self.exists()
@@ -84,7 +86,8 @@ class OpmlLoader(object):
         while len(stack) > 0:
             data = stack.pop()
             for v in data:
-                if v.text == 'Shownotes':
+                if (v.text.endswith('Shownotes') or
+                        v.text.endswith('Assets')) and len(v) > 0:
                     return v
                 elif len(v) > 0:
                     stack.append(v)
