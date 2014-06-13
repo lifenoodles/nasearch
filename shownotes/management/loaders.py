@@ -3,6 +3,7 @@ import common.netutils as netutils
 from datetime import datetime
 from shownotes.models import Show, Note, TextEntry, UrlEntry, Topic
 import re
+import bs4
 
 number_pattern = re.compile('(\d+)')
 
@@ -134,3 +135,17 @@ class OpmlLoader(object):
                     note=new_note, text=u'<br>'.join(full_text))
                 new_entry.text = strip_4_bytes(new_entry.text)
                 new_entry.save()
+
+
+class HtmlLoader(object):
+    def __init__(self, text):
+        soup = bs4.BeautifulSoup(text)
+        matcher = re.compile('.*Shownotes.*')
+        note_divs = soup.findAll(id=matcher)
+        if len(note_divs) == 0:
+            raise ValueError('No shownote div found')
+        if len(note_divs) > 1:
+            raise ValueError('Too many shownote divs found')
+
+    def save(self):
+        pass
