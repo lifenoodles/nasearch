@@ -4,7 +4,7 @@ server {
     access_log off;
 
     location /static/ {
-        alias /home/ubuntu/venv/noagenda-db/static/;
+        alias /opt/noagenda-db/static/;
     }
 
     location / {

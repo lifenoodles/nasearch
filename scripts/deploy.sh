@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-rsync -rv --relative -e "ssh -i /home/donagh/.ssh/server.pem" \
+# use rsync to prep the app files for docker
+#rsync -rv --relative -e "ssh -i /home/donagh/.ssh/server.pem" \
+rsync -rv --relative \
 --exclude "*.pyc" \
 --exclude "whoosh_index" \
 --exclude "cleaned_settings.py" \
@@ -11,5 +13,7 @@ rsync -rv --relative -e "ssh -i /home/donagh/.ssh/server.pem" \
 --exclude "*.opml" \
 --exclude "*.fuse*" \
 --exclude "*.sublime-*" \
-. "$1":~/venv/noagenda-db/noagenda-db/
+--exclude "scripts/" \
+--exclude "build/" \
+. deploy/app/
 
