@@ -15,5 +15,5 @@ rsync -rv --relative \
 --exclude "*.sublime-*" \
 --exclude "scripts/" \
 --exclude "build/" \
-. deploy/app/
+. deploy/nadb-dock/app/
 
