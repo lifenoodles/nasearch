@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-# use rsync to prep the app files for docker
-#rsync -rv --relative -e "ssh -i /home/donagh/.ssh/server.pem" \
-rsync -rv --relative \
+# use rsync to copy needed files
+rsync -rv --relative -e "ssh -i /home/donagh/.ssh/server.pem" \
 --exclude "*.pyc" \
 --exclude "whoosh_index" \
 --exclude "cleaned_settings.py" \
@@ -14,6 +13,7 @@ rsync -rv --relative \
 --exclude "*.fuse*" \
 --exclude "*.sublime-*" \
 --exclude "scripts/" \
---exclude "build/" \
-. deploy/nadb-dock/app/
+--exclude "deploy/" \
+. ubuntu@54.213.153.244:~/venv/noagenda-db/noagenda-db/
 
+ssh -i ~/.ssh/server.pem ubuntu@54.213.153.244 "source ~/venv/noagenda-db/bin/activate;cd ~/venv/noagenda-db/noagenda-db;python manage.py collectstatic --noinput"
