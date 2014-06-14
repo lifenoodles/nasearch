@@ -77,3 +77,16 @@ class UrlEntry(models.Model):
     @classmethod
     def get_by_note(cls, note):
         return UrlEntry.objects.filter(note=note)
+
+
+class ShowSource(models.Model):
+    OPML = 'opml'
+    HTML = 'html'
+    SOURCE_CHOICES = ((OPML, 'opml'), (HTML, 'html'))
+    filetype = models.CharField(max_length=4, choices=SOURCE_CHOICES)
+    text = models.TextField()
+    show_number = models.IntegerField(unique=True)
+
+    @classmethod
+    def exists(cls, number):
+        return ShowSource.objects.filter(show_number=number).count() == 1
