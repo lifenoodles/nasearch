@@ -32,7 +32,7 @@ class OpmlLoader(object):
     def __init__(self, source):
         self.source = source
         try:
-            self.data = opml.parse(source)
+            self.data = opml.from_string(source)
         except Exception as e:
             raise OpmlSourceError(e)
         try:
