@@ -1,4 +1,4 @@
-from shownotes.models import Show
+from shownotes.models import Show, ShowSource
 from django.core.management.base import BaseCommand
 import shownotes.management.loaders as loaders
 import common.netutils as netutils
@@ -10,7 +10,7 @@ import time
 html_list = deque()
 SHOWNOTE_MID_CUTOFF = 490
 # SHOWNOTE_CUTOFF = 375
-SHOWNOTE_CUTOFF = 490
+SHOWNOTE_CUTOFF = 500
 
 
 def html_getter(*show_number):
@@ -20,11 +20,13 @@ def html_getter(*show_number):
     shownote_url = 'http://{}.nashownotes.com/shownotes'
     for number in reversed(xrange(SHOWNOTE_CUTOFF, show_number + 1)):
         if not Show.exists(number):
+            if ShowSource.exists(number):
+                html_list.append(number)
+                continue
             if number < direct_cutoff:
                 url = shownote_url.format(number)
             else:
                 url = main_url.format(number)
-
             try:
                 text = netutils.get_html(url)
             except:
@@ -32,16 +34,27 @@ def html_getter(*show_number):
                 continue
 
             # check for opml links
-            opml_links = netutils.get_links_to('$http://.*\.opml$', text)
+            opml_links = netutils.get_links_to('^http://.*\.opml$', text)
+            print opml_links
             if len(opml_links) > 0:
                 assert(len(opml_links) == 1)
+                try:
+                    opml = netutils.get_html(opml_links[0])
+                except:
+                    print('Error loading opml from: {}'.format(
+                        opml_links[0]))
+                    continue
                 print('   -> {} opml'.format(number))
-                html_list.append((number, opml_links[0]))
+                ShowSource(filetype=ShowSource.OPML, text=opml,
+                           show_number=number).save()
+                html_list.append(number)
             else:
                 print('   -> {} html'.format(number))
-                html_list.append((number, text))
+                ShowSource(filetype=ShowSource.HTML, text=text,
+                           show_number=number).save()
+                html_list.append(number)
         else:
-            print('Show {} already exists'.format(number))
+            print('Show {} already imported'.format(number))
 
 
 class Command(BaseCommand):
@@ -61,31 +74,33 @@ class Command(BaseCommand):
         #            if x is not None]
         # show_number = max([int(x) for x in numbers])
 
-        html_thread = Thread(target=html_getter, args=(554,))
+        html_thread = Thread(target=html_getter, args=(625,))
         html_thread.start()
 
         while html_thread.is_alive() or len(html_list) > 0:
             try:
-                number, text = html_list.popleft()
+                number = html_list.popleft()
             except IndexError:
                 time.sleep(0.1)
                 continue
 
-            if re.search('^http://.*\.opml$', text):
-                self.stdout.write('Loading {}'.format(text))
+            assert ShowSource.exists(number)
+            source = ShowSource.objects.get(show_number=number)
+            if source.filetype == ShowSource.OPML:
+                self.stdout.write('loading opml for show {}'.format(number))
                 try:
-                    loader = loaders.OpmlLoader(text)
+                    loader = loaders.OpmlLoader(source.text)
                     loader.save()
-                    self.stdout.write('opml parsed for episode {}'
+                    self.stdout.write('opml parsed for show {}'
                                       .format(loader.number))
                 except Exception as e:
                     self.stdout.write(
                         'Error occured while loading opml: {}'
                         .format(e))
             else:
-                self.stdout.write('Loading html for show {}'.format(number))
+                self.stdout.write('loading html for show {}'.format(number))
                 try:
-                    loader = loaders.HtmlLoader(text, number)
+                    loader = loaders.HtmlLoader(source.text, number)
                     loader.save()
                     self.stdout.write('html parsed for episode {}'
                                       .format(number))
