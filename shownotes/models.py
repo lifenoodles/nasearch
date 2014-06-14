@@ -10,6 +10,10 @@ class Show(models.Model):
     def __unicode__(self):
         return u'{}: {}'.format(self.id, self.name)
 
+    @classmethod
+    def exists(cls, number):
+        return Show.objects.filter(pk=number).count() == 1
+
 
 class Topic(models.Model):
     name = models.CharField(max_length=100)
