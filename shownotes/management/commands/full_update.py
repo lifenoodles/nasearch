@@ -32,7 +32,7 @@ def html_getter(*show_number):
                 continue
 
             # check for opml links
-            opml_links = netutils.get_links_to('.opml$', text)
+            opml_links = netutils.get_links_to('$http://.*\.opml$', text)
             if len(opml_links) > 0:
                 assert(len(opml_links) == 1)
                 print('   -> {} opml'.format(number))
