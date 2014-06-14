@@ -41,7 +41,8 @@ def get_links_to(pattern, html):
     '''
     soup = BeautifulSoup(html)
     links = [x['href'] for x in soup.find_all('a', href=True)]
-    links = [l for l in links if re.search(pattern, l.text)]
+    links = [l for l in links if re.search(pattern, l)]
+    return links
 
 
 def extract_urls_from_html(html):

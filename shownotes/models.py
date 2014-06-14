@@ -29,6 +29,10 @@ class Topic(models.Model):
         query = reduce(lambda x, y: x | y, qs)
         return Topic.objects.filter(query)
 
+    @classmethod
+    def exists(cls, name):
+        return Topic.objects.filter(name=name).count() > 0
+
 
 class Note(models.Model):
     show = models.ForeignKey(Show)

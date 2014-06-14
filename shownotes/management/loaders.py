@@ -3,7 +3,7 @@ import common.netutils as netutils
 from datetime import datetime
 from shownotes.models import Show, Note, TextEntry, UrlEntry, Topic
 import re
-import bs4
+from BeautifulSoup import BeautifulSoup
 
 number_pattern = re.compile('(\d+)')
 
@@ -138,14 +138,66 @@ class OpmlLoader(object):
 
 
 class HtmlLoader(object):
-    def __init__(self, text):
-        soup = bs4.BeautifulSoup(text)
-        matcher = re.compile('.*Shownotes.*')
-        note_divs = soup.findAll(id=matcher)
-        if len(note_divs) == 0:
+    def __init__(self, text, number):
+        self.soup = BeautifulSoup(text)
+        id_matcher = re.compile('.*Shownotes.*')
+        shownote_divs = self.soup.findAll(id=id_matcher)
+        if len(shownote_divs) == 0:
             raise ValueError('No shownote div found')
-        if len(note_divs) > 1:
+        if len(shownote_divs) > 1:
             raise ValueError('Too many shownote divs found')
+        shownote_div = shownote_divs[0]
+        self.number = number
+        self.list_div = shownote_div.find(
+            'div', {'class': 'divOutlineList'})
+        self.title = self._extract_title()
+
+    def _extract_title(self):
+        title_matcher = re.compile('.*[tT]itle')
+        title_div = self.soup.find('', {'class': title_matcher})
+        if title_div is None:
+            return self.number
+        return title_div.text
 
     def save(self):
-        pass
+        assert not Show.exists(self.number)
+        show = Show(id=self.number, name=self.title,
+                    last_updated=datetime.fromtimestamp(0))
+        show.save()
+
+        topics = [e for e in self.list_div.childGenerator()
+                  if hasattr(e, 'findChild') and e.text != u'Search']
+
+        i = 0
+        while i < len(topics):
+            topic_name = topics[i].text
+            if not Topic.exists(topic_name):
+                topic = Topic(name=topic_name)
+                topic.save()
+            else:
+                topic = Topic.objects.get(name=topic_name)
+
+            notes = topics[i + 1].find('div', {'class': 'divOutlineList'}) \
+                .findChildren('p', recursive=False)
+
+            for note_div in notes:
+                next_sibling = note_div.findNextSibling()
+                if next_sibling is None or next_sibling.name != u'div':
+                    continue
+
+                note = Note(show=show, topic=topic, title=note_div.text)
+                note.save()
+
+                contents = note_div.findNextSibling('div').findChildren(
+                    '', {'class': 'divOutlineItem'})
+                text = []
+                for content in contents:
+                    link = content.findChild('a')
+                    if link:
+                        UrlEntry(note=note, text=link.text,
+                                 url=link['href']).save()
+                    else:
+                        text.append(content.text)
+                TextEntry(note=note,
+                          text='<br>'.join(text).replace('\n', '')).save()
+            i += 2
