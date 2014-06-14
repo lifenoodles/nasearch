@@ -140,7 +140,7 @@ class OpmlLoader(object):
 class HtmlLoader(object):
     def __init__(self, text, number):
         self.soup = BeautifulSoup(text)
-        id_matcher = re.compile('.*Shownotes.*')
+        id_matcher = re.compile('.*[sS]hownotes.*')
         shownote_divs = self.soup.findAll(id=id_matcher)
         if len(shownote_divs) == 0:
             raise ValueError('No shownote div found')
@@ -166,7 +166,7 @@ class HtmlLoader(object):
         show.save()
 
         topics = [e for e in self.list_div.childGenerator()
-                  if hasattr(e, 'findChild') and e.text != u'Search']
+                  if hasattr(e, 'findChild')]
 
         i = 0
         while i < len(topics):
@@ -177,8 +177,12 @@ class HtmlLoader(object):
             else:
                 topic = Topic.objects.get(name=topic_name)
 
-            notes = topics[i + 1].find('div', {'class': 'divOutlineList'}) \
-                .findChildren('p', recursive=False)
+            outline_list = topics[i + 1].find(
+                'div', {'class': 'divOutlineList'})
+            if outline_list is None:
+                i += 1
+                continue
+            notes = outline_list.findChildren('p', recursive=False)
 
             for note_div in notes:
                 next_sibling = note_div.findNextSibling()

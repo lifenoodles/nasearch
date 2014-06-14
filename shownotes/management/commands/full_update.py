@@ -10,7 +10,7 @@ import time
 html_list = deque()
 SHOWNOTE_MID_CUTOFF = 490
 # SHOWNOTE_CUTOFF = 375
-SHOWNOTE_CUTOFF = 582
+SHOWNOTE_CUTOFF = 490
 
 
 def html_getter(*show_number):
@@ -34,11 +34,11 @@ def html_getter(*show_number):
             # check for opml links
             opml_links = netutils.get_links_to('.opml$', text)
             if len(opml_links) > 0:
-                assert(len(opml_links == 1))
-                print('Inserting opml for show: {}'.format(number))
+                assert(len(opml_links) == 1)
+                print('   -> {} opml'.format(number))
                 html_list.append((number, opml_links[0]))
             else:
-                print('Inserting html for show: {}'.format(number))
+                print('   -> {} html'.format(number))
                 html_list.append((number, text))
         else:
             print('Show {} already exists'.format(number))
@@ -61,12 +61,12 @@ class Command(BaseCommand):
         #            if x is not None]
         # show_number = max([int(x) for x in numbers])
 
-        html_thread = Thread(target=html_getter, args=(582,))
+        html_thread = Thread(target=html_getter, args=(554,))
         html_thread.start()
 
         while html_thread.is_alive() or len(html_list) > 0:
             try:
-                number, text = html_list.pop()
+                number, text = html_list.popleft()
             except IndexError:
                 time.sleep(0.1)
                 continue
