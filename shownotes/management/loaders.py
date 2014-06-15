@@ -4,6 +4,7 @@ from datetime import datetime
 from shownotes.models import Show, Note, TextEntry, UrlEntry, Topic
 import re
 from BeautifulSoup import BeautifulSoup
+from django.db import transaction
 
 number_pattern = re.compile('(\d+)')
 
@@ -43,6 +44,7 @@ class OpmlLoader(object):
         except ValueError:
             raise ValueError('Bad opml data, no show number')
 
+    @transaction.atomic
     def save(self):
         if self.exists():
             show = Show.objects.get(pk=self.number)
@@ -159,6 +161,7 @@ class HtmlLoader(object):
             return self.number
         return title_div.text
 
+    @transaction.atomic
     def save(self):
         assert not Show.exists(self.number)
         show = Show(id=self.number, name=self.title,
