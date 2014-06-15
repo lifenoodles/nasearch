@@ -145,6 +145,9 @@ class HtmlLoader(object):
         id_matcher = re.compile('.*[sS]hownotes.*')
         shownote_divs = self.soup.findAll(id=id_matcher)
         if len(shownote_divs) == 0:
+            shownote_divs = self.soup.findAll(
+                id=re.compile('divTheOutline'))
+        if len(shownote_divs) == 0:
             raise ValueError('No shownote div found')
         if len(shownote_divs) > 1:
             raise ValueError('Too many shownote divs found')
@@ -161,7 +164,7 @@ class HtmlLoader(object):
             return self.number
         return title_div.text
 
-    @transaction.atomic
+    # @transaction.atomic
     def save(self):
         assert not Show.exists(self.number)
         show = Show(id=self.number, name=self.title,
@@ -180,14 +183,14 @@ class HtmlLoader(object):
                 continue
 
             topic_name = topics[i].text
-            print topic_name
+            # print topic_name
+            # print len(outline_list)
             if not Topic.exists(topic_name):
                 topic = Topic(name=topic_name)
                 topic.save()
             else:
                 topic = Topic.objects.get(name=topic_name)
 
-            print len(outline_list)
             notes = outline_list[0].findChildren('p', recursive=False)
 
             for note_div in notes:
@@ -211,3 +214,85 @@ class HtmlLoader(object):
                 TextEntry(note=note,
                           text='<br>'.join(text).replace('\n', '')).save()
             i += 2
+
+
+class NewHtmlLoader(object):
+    def __init__(self, text, number):
+        self.soup = BeautifulSoup(text)
+        id_matcher = re.compile('.*[sS]hownotes.*')
+        shownote_divs = self.soup.findAll(id=id_matcher)
+        if len(shownote_divs) == 0:
+            raise ValueError('No shownote div found')
+        if len(shownote_divs) > 1:
+            raise ValueError('Too many shownote divs found')
+        shownote_div = shownote_divs[0]
+        self.number = number
+        self.list_div = shownote_div
+        self.title = self._extract_title()
+
+    def _extract_title(self):
+        title_div = self.soup.title
+        if title_div is None:
+            return self.number
+        return title_div.text
+
+    # @transaction.atomic
+    def save(self):
+        assert not Show.exists(self.number)
+        show = Show(id=self.number, name=self.title,
+                    last_updated=datetime.fromtimestamp(0))
+        show.save()
+
+        topics = [e for e in self.list_div.findChildren(recursive=False)]
+
+        re_outline = re.compile('outline')
+        for t in topics:
+            topic_item = t.findChild('li', {'class': re_outline})
+
+            notes = topic_item.findChildren(
+                'ul', {'class': re_outline}, recursive=False)
+
+            if notes is None or len(notes) == 0:
+                continue
+
+            topic_name = topic_item.text[:topic_item.text.index(
+                topic_item.findChild().text)]
+            # print topic_name
+            # print len(outline_list)
+            if not Topic.exists(topic_name):
+                topic = Topic(name=topic_name)
+                topic.save()
+            else:
+                topic = Topic.objects.get(name=topic_name)
+
+            notes = topic_item.findChildren(
+                'ul', {'class': re_outline}, recursive=False)
+
+            # print topic_name
+            # print len(notes)
+
+            for n in notes:
+                note_item = n.findChild(
+                    'li', {'class': re.compile('outline')})
+
+                if note_item.findChild() is None:
+                    continue
+
+                note_title = note_item.text[:note_item.text.index(
+                    note_item.findChild().text)]
+
+                note = Note(show=show, topic=topic, title=note_title)
+                note.save()
+
+                contents = note_item.findChildren(
+                    'ul', {'class': re_outline})
+                text = []
+                for content in contents:
+                    link = content.findChild('a')
+                    if link:
+                        UrlEntry(note=note, text=link.text,
+                                 url=link['href']).save()
+                    else:
+                        text.append(content.text)
+                TextEntry(note=note,
+                          text='<br>'.join(text).replace('\n', '')).save()

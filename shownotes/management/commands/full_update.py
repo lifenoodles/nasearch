@@ -8,8 +8,9 @@ import time
 
 html_list = deque()
 SHOWNOTE_MID_CUTOFF = 490
-# SHOWNOTE_CUTOFF = 375
-SHOWNOTE_CUTOFF = 500
+SHOWNOTE_CUTOFF = 375
+NEW_HTML_FORMAT_START = 590
+# SHOWNOTE_CUTOFF = 505
 BAD_LIST = [534, 533, 505]
 
 
@@ -37,7 +38,6 @@ def html_getter(*show_number):
 
             # check for opml links
             opml_links = netutils.get_links_to('^http://.*\.opml$', text)
-            print opml_links
             if len(opml_links) > 0:
                 assert(len(opml_links) == 1)
                 try:
@@ -103,7 +103,10 @@ class Command(BaseCommand):
             else:
                 self.stdout.write('loading html for show {}'.format(number))
                 try:
-                    loader = loaders.HtmlLoader(source.text, number)
+                    if number >= NEW_HTML_FORMAT_START:
+                        loader = loaders.NewHtmlLoader(source.text, number)
+                    else:
+                        loader = loaders.HtmlLoader(source.text, number)
                     loader.save()
                     self.stdout.write('html parsed for episode {}'
                                       .format(number))
