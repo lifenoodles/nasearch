@@ -173,19 +173,22 @@ class HtmlLoader(object):
 
         i = 0
         while i < len(topics):
+            outline_list = topics[i + 1].findAll(
+                'div', {'class': 'divOutlineList'})
+            if outline_list is None or len(outline_list) <= 1:
+                i += 1
+                continue
+
             topic_name = topics[i].text
+            print topic_name
             if not Topic.exists(topic_name):
                 topic = Topic(name=topic_name)
                 topic.save()
             else:
                 topic = Topic.objects.get(name=topic_name)
 
-            outline_list = topics[i + 1].find(
-                'div', {'class': 'divOutlineList'})
-            if outline_list is None:
-                i += 1
-                continue
-            notes = outline_list.findChildren('p', recursive=False)
+            print len(outline_list)
+            notes = outline_list[0].findChildren('p', recursive=False)
 
             for note_div in notes:
                 next_sibling = note_div.findNextSibling()
