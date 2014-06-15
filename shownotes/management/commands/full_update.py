@@ -2,7 +2,6 @@ from shownotes.models import Show, ShowSource
 from django.core.management.base import BaseCommand
 import shownotes.management.loaders as loaders
 import common.netutils as netutils
-import re
 from collections import deque
 from threading import Thread
 import time
@@ -11,6 +10,7 @@ html_list = deque()
 SHOWNOTE_MID_CUTOFF = 490
 # SHOWNOTE_CUTOFF = 375
 SHOWNOTE_CUTOFF = 500
+BAD_LIST = [534, 533, 505]
 
 
 def html_getter(*show_number):
@@ -19,6 +19,8 @@ def html_getter(*show_number):
     main_url = 'http://{}.nashownotes.com'
     shownote_url = 'http://{}.nashownotes.com/shownotes'
     for number in reversed(xrange(SHOWNOTE_CUTOFF, show_number + 1)):
+        if number in BAD_LIST:
+            continue
         if not Show.exists(number):
             if ShowSource.exists(number):
                 html_list.append(number)
@@ -53,6 +55,7 @@ def html_getter(*show_number):
                 ShowSource(filetype=ShowSource.HTML, text=text,
                            show_number=number).save()
                 html_list.append(number)
+            time.sleep(0.01)
         else:
             print('Show {} already imported'.format(number))
 
@@ -81,7 +84,7 @@ class Command(BaseCommand):
             try:
                 number = html_list.popleft()
             except IndexError:
-                time.sleep(0.1)
+                time.sleep(0.01)
                 continue
 
             assert ShowSource.exists(number)
