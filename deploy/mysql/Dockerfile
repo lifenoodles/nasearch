@@ -8,9 +8,11 @@ RUN apt-get update
 RUN apt-get -y install mysql-server
 
 RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
-RUN sed -i -e "s/^port\s*=\s*3306/port = 3310/" /etc/mysql/my.cnf
-# ADD setup-mysql.sh /opt/setup.sh
+# RUN sed -i -e "s/^port\s*=\s*3306/port = 3310/" /etc/mysql/my.cnf
+ADD setup-mysql.sh /opt/setup.sh
+ADD ../../secrets.sh /opt/secrets.sh
+RUN /opt/secrets.sh
 
-EXPOSE 3310
+EXPOSE 3306
 
 CMD mysqld_safe

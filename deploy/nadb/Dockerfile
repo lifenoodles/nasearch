@@ -6,7 +6,7 @@ RUN dpkg-divert --local --rename --add /sbin/initctl
 
 RUN apt-get update
 RUN apt-get -y install nginx python-pip libmysqlclient-dev libxslt1-dev python-dev supervisor
-RUN pip install gunicorn django requests opml feedparser django-haystack whoosh BeautifulSoup4 MySQL-python
+RUN pip install gunicorn django requests opml feedparser django-haystack whoosh BeautifulSoup MySQL-python
 RUN mkdir -p /var/log/supervisor
 
 ADD /app /opt/noagenda-db/
