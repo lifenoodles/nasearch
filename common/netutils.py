@@ -1,3 +1,4 @@
+from shownotes.models import ShowSource
 import requests
 import feedparser
 from BeautifulSoup import BeautifulSoup
@@ -51,3 +52,25 @@ def extract_urls_from_html(html):
     '''
     soup = BeautifulSoup(html)
     return [x['href'] for x in soup.find_all('a', href=True)]
+
+
+def insert_show_source(url, number):
+    opml_pattern = '^http://.*\.opml'
+    opml_re = re.compile(opml_pattern)
+
+    if not opml_re.match(url):
+        text = get_html(url)
+        opml_urls = get_links_to(opml_pattern, text)
+        assert len(opml_urls) <= 1
+        if len(opml_urls) == 0:
+            ShowSource(show_number=number, filetype=ShowSource.HTML,
+                       text=text).save()
+            return True
+        else:
+            url = opml_urls[0]
+    if opml_re.match(url):
+        text = get_html(url)
+        ShowSource(show_number=number, filetype=ShowSource.OPML,
+                   text=text).save()
+        return True
+    return False

@@ -1,12 +1,22 @@
 import opml
 import common.netutils as netutils
 from datetime import datetime
-from shownotes.models import Show, Note, TextEntry, UrlEntry, Topic
+from shownotes.models import Show, Note, TextEntry, UrlEntry, \
+    Topic, ShowSource
 import re
 from BeautifulSoup import BeautifulSoup
 from django.db import transaction
 
 number_pattern = re.compile('(\d+)')
+
+
+def load_shownotes(number):
+    assert ShowSource.exists(number)
+    source = ShowSource.objects.get(show_number=number)
+    if source.filetype == ShowSource.OPML:
+        OpmlLoader(source.text).save()
+    else:
+        HtmlLoader(source.text, number).save()
 
 
 def strip_4_bytes(string):
