@@ -29,6 +29,7 @@ class Command(BaseCommand):
 
         shownote_links = [s for s in shownote_links if shownote_filter(s)]
         for link in shownote_links:
+            print link
             number = number_re.search(link).group()
             try:
                 netutils.insert_show_source(
