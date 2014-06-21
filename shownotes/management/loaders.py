@@ -12,10 +12,9 @@ number_pattern = re.compile('(\d+)')
 
 
 def ensure_topic_exists(name):
+    name = strip_4_bytes(html.strip_tags(name))
     if not Topic.objects.filter(name=name).exists():
         topic = Topic(name=name)
-        topic.name = strip_4_bytes(topic.name)
-        topic.name = html.strip_tags(topic.name)
         topic.save()
     else:
         topic = Topic.objects.get(name=name)
