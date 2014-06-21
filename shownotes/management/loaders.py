@@ -6,8 +6,20 @@ from shownotes.models import Show, Note, TextEntry, UrlEntry, \
 import re
 from BeautifulSoup import BeautifulSoup
 from django.db import transaction
+from django.utils import html
 
 number_pattern = re.compile('(\d+)')
+
+
+def ensure_topic_exists(name):
+    if not Topic.objects.filter(name=name).exists():
+        topic = Topic(name=name)
+        topic.name = strip_4_bytes(topic.name)
+        topic.name = html.strip_tags(topic.name)
+        topic.save()
+    else:
+        topic = Topic.objects.get(name=name)
+    return topic
 
 
 def load_shownotes(number):
@@ -107,13 +119,7 @@ class OpmlLoader(object):
         raise ValueError('No shownotes found')
 
     def _get_topic(self, name):
-        if not Topic.objects.filter(name=name).exists():
-            topic = Topic(name=name)
-            topic.name = strip_4_bytes(topic.name)
-            topic.save()
-        else:
-            topic = Topic.objects.get(name=name)
-        return topic
+        return ensure_topic_exists(name)
 
     def _insert_entries(self):
         assert self.exists()
@@ -193,13 +199,7 @@ class HtmlLoader(object):
                 continue
 
             topic_name = topics[i].text
-            # print topic_name
-            # print len(outline_list)
-            if not Topic.exists(topic_name):
-                topic = Topic(name=topic_name)
-                topic.save()
-            else:
-                topic = Topic.objects.get(name=topic_name)
+            topic = ensure_topic_exists(topic_name)
 
             notes = outline_list[0].findChildren('p', recursive=False)
 
@@ -267,14 +267,8 @@ class NewHtmlLoader(object):
 
             topic_name = topic_item.text[:topic_item.text.index(
                 topic_item.findChild().text)]
-            # print topic_name
-            # print len(outline_list)
-            if not Topic.exists(topic_name):
-                topic = Topic(name=topic_name)
-                topic.save()
-            else:
-                topic = Topic.objects.get(name=topic_name)
 
+            topic = ensure_topic_exists(topic_name)
             notes = topic_item.findChildren(
                 'ul', {'class': re_outline}, recursive=False)
 
