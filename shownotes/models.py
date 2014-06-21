@@ -18,6 +18,9 @@ class Show(models.Model):
 class Topic(models.Model):
     name = models.CharField(max_length=100)
 
+    def note_count(self):
+        return Note.objects.filter(topic__id=self.id).count()
+
     def __unicode__(self):
         return self.name
 
