@@ -23,3 +23,6 @@ class NoteIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_url_entries(self, obj):
         return [t.url for t in UrlEntry.objects.filter(note=obj)]
+
+    def get_updated_field(self):
+        return "show__last_updated"

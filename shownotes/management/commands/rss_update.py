@@ -14,7 +14,6 @@ class Command(BaseCommand):
 
         shownote_links = filter(lambda x: 'noagendanotes' in x,
                                 netutils.extract_urls_from_rss(feed))
-
         number_re = re.compile('\d+')
 
         def shownote_filter(url):

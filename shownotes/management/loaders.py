@@ -89,7 +89,7 @@ class OpmlLoader(object):
     def _insert_show(self):
         assert not self.exists()
         show = Show(name=self.title, id=self.number,
-                    last_updated=self.date_modified())
+                    last_updated=datetime.now())
         show.name = strip_4_bytes(show.name)
         show.save()
         assert self.exists()
@@ -178,7 +178,7 @@ class HtmlLoader(object):
     def save(self):
         assert not Show.exists(self.number)
         show = Show(id=self.number, name=self.title,
-                    last_updated=datetime.fromtimestamp(0))
+                    last_updated=datetime.now())
         show.save()
 
         topics = [e for e in self.list_div.childGenerator()
@@ -250,7 +250,7 @@ class NewHtmlLoader(object):
     def save(self):
         assert not Show.exists(self.number)
         show = Show(id=self.number, name=self.title,
-                    last_updated=datetime.fromtimestamp(0))
+                    last_updated=datetime.now())
         show.save()
 
         topics = [e for e in self.list_div.findChildren(recursive=False)]
