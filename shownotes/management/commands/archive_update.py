@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from shownotes.models import Show
 from shownotes.management.loaders import OpmlLoader
-import shownotes.management.loaders as loaders
 import common.netutils as netutils
 import requests
 import opml
