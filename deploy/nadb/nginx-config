@@ -1,9 +1,8 @@
 server {
-    server_name nashowsearch.com;
-
-    access_log off;
+    server_name search.nashownotes.com;
 
     location /static/ {
+        access_log off;
         alias /opt/noagenda-db/static/;
     }
 
