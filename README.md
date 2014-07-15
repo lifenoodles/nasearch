@@ -1,18 +1,18 @@
 nasearch
 ========
 
-Search engine for shownotes for the [No Agenda Show](http://www.noagendashow.com/). Live at [search.nashownotes.com](search.nashownotes.com).
+Search engine for shownotes for the [No Agenda Show](http://www.noagendashow.com/). Live at [search.nashownotes.com](http://search.nashownotes.com).
 
 If you want to fork and work on some modifications or use this as a template for your own search engine, the following instructions might be of use.
 
 Set up for development
 ----------------------
-nasearch is built on Django with Haystack/Whoosh and MySQL. 
+nasearch is built on Django with Haystack/Whoosh and MySQL.
 To get a development version up and running, you should first install the dependencies on your local machine.
 
-+ python-pip 
-+ libmysqlclient-dev 
-+ libxslt1-dev 
++ python-pip
++ libmysqlclient-dev
++ libxslt1-dev
 + python-dev
 
 On debian/ubuntu based systems, these are all in the package manager and you can install with `sudo apt-get install python-pip libmysqlclient-dev libxslt1-dev python-dev`. You can then use pip with the requirements.txt file. `pip install -r requirements.txt`. It is recommended that you set up a virtualenv to use for development, there are plenty of guides online that can walk you through that process.
@@ -28,7 +28,7 @@ To deploy, you must first configure the settings_cleaned.py file to conform to D
 
 Populating the database
 -----------
-There are several custom Django management commands included to make maintenance/data population easier. 
+There are several custom Django management commands included to make maintenance/data population easier.
 
 + full_update attempts to perform a full update of the database by iterating through old show notes starting from the most recent one posted in the rss feed.
 + rss_update attempts to update only from the shownotes referenced in the rss feed.
