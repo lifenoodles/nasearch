@@ -1,4 +1,1 @@
-Add datestamps to allow faster indexing
-merge topics
 finish importing pre 490
-add contact info to site
