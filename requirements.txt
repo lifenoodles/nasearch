@@ -4,5 +4,5 @@ opml>=0.5
 feedparser>=5.1.2
 django-haystack>=2.1.0
 whoosh>=2.6.0
-BeautifulSoup4>=3.2.1
+BeautifulSoup>=3.2.1
 MySQL-python>=1.2.5
