@@ -5,6 +5,14 @@ from haystack.inputs import AutoQuery
 import math
 
 
+def json_result(result):
+    return {'show_number': result.show_number,
+            'topic_name': result.topic_name,
+            'title': result.text,
+            'urls': [url for url in result.url_entries],
+            'text': result.text_entry}
+
+
 def topics():
     return [{'text': t.name, 'id': t.id} for t in Topic.objects.all()]
 
@@ -48,10 +56,15 @@ def search(parameters):
     except EmptyPage:
         paged_results = []
         response_dict['page'] = 0
-    response_dict['results'] = [{'show_number': x.show_number,
-                                 'topic_name': x.topic_name,
-                                 'title': x.text,
-                                 'urls': [url for url in x.url_entries],
-                                 'text': x.text_entry}
-                                for x in paged_results]
+    response_dict['results'] = [json_result(x) for x in paged_results]
     return response_dict
+
+
+def show(parameters):
+    print parameters
+    if 'number' in parameters and parameters['number'].isdigit():
+        shows = SearchQuerySet().filter(show_number=int(parameters['number'])) \
+            .order_by('topic_name')
+        return [json_result(show) for show in shows]
+    else:
+        return []

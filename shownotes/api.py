@@ -30,3 +30,10 @@ def search(request):
     recognised parameters are: topics, results_limit, page, string
     """
     return wrap_json(request, searches.search(request.GET))
+
+
+def show(request):
+    """
+    fetch all shownotes belonging to a specific show number
+    """
+    return wrap_json(request, searches.show(request.GET))
