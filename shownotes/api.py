@@ -13,7 +13,7 @@ def wrap_json(request, payload):
             request.GET['callback'],
             json.dumps(payload)), content_type='text/javascript')
     else:
-        return HttpResponse(json.dumps(searches.topics()),
+        return HttpResponse(json.dumps(payload),
                             content_type='application/json')
 
 
@@ -22,3 +22,11 @@ def topics(request):
     return a list of paired topic names and ids
     """
     return wrap_json(request, searches.topics())
+
+
+def search(request):
+    """
+    perform a search and return the matches
+    recognised parameters are: topics, results_limit, page, string
+    """
+    return wrap_json(request, searches.search(request.GET))
