@@ -1,13 +1,11 @@
-from models import Topic
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from haystack.query import SearchQuerySet, SQ
 from haystack.inputs import AutoQuery
-from haystack.utils import Highlighter
+import searches
 import json
-import re
 
 
 TOPIC_SEARCH_LIMIT = 10
@@ -78,8 +76,7 @@ def search_topics(request):
 
 
 def topics(request):
-    topics = Topic.objects.all()
-    topics = [{'text': t.name, 'id': t.id} for t in topics]
+    topics = searches.topics()
     topics.sort(key=lambda x: x['text'])
     return HttpResponse(json.dumps(topics),
                         content_type='application/json')
