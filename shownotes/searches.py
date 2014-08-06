@@ -2,7 +2,6 @@ from shownotes.models import Topic
 from django.core.paginator import Paginator, EmptyPage
 from haystack.query import SearchQuerySet, SQ
 from haystack.inputs import AutoQuery
-import math
 
 
 def json_result(result):
@@ -18,13 +17,13 @@ def topics():
 
 
 def search(parameters):
-    RESULTS_LIMIT = 20
+    RESULTS_LIMIT = 50
     topics = []
     if 'topics' in parameters:
         topics = [int(t) for t in parameters['topics'].split() if t.isdigit()]
     limit = RESULTS_LIMIT
-    if 'results_limit' in parameters:
-        limit = math.min(RESULTS_LIMIT, parameters['results_limit'])
+    if 'limit' in parameters and parameters['limit'].isdigit():
+        limit = min(RESULTS_LIMIT, int(parameters['limit']))
     page = 1
     if 'page' in parameters and parameters['page'].isdigit():
         page = int(parameters['page'])
@@ -33,9 +32,8 @@ def search(parameters):
         string = parameters['string']
 
     response_dict = {'results': [], 'page': 0, 'page_count': 0,
-                     'result_count': 0}
+                     'result_count': 0, 'page_result_count': 0}
     if string == '' and topics == []:
-        print response_dict
         return response_dict
 
     if string == '':
@@ -48,7 +46,6 @@ def search(parameters):
 
     response_dict['result_count'] = results.count()
     paginator = Paginator(results, limit)
-    print paginator.num_pages
     response_dict['page_count'] = paginator.num_pages
     try:
         paged_results = paginator.page(page)
@@ -57,11 +54,11 @@ def search(parameters):
         paged_results = []
         response_dict['page'] = 0
     response_dict['results'] = [json_result(x) for x in paged_results]
+    response_dict['page_result_count'] = len(paged_results)
     return response_dict
 
 
 def show(parameters):
-    print parameters
     if 'number' in parameters and parameters['number'].isdigit():
         shows = SearchQuerySet().filter(show_number=int(parameters['number'])) \
             .order_by('topic_name')
