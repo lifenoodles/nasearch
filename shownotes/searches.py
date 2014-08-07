@@ -18,9 +18,11 @@ def topics():
 
 def search(parameters):
     RESULTS_LIMIT = 50
+    TOPIC_LIMIT = 10
     topics = []
     if 'topics' in parameters:
         topics = [int(t) for t in parameters['topics'].split() if t.isdigit()]
+    topics = topics[:TOPIC_LIMIT]
     limit = RESULTS_LIMIT
     if 'limit' in parameters and parameters['limit'].isdigit():
         limit = min(RESULTS_LIMIT, int(parameters['limit']))

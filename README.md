@@ -26,7 +26,7 @@ Returns a list of objects describing the topics:
 Perform a search of shownotes and return the results.
 Parameters:
 
- + topics: a space delimited list of topic ids. If none are included the search will cover all topics. If one or more ids are included the search will be restricted to those ids.
+ + topics: a space delimited list of topic ids. If none are included the search will cover all topics. If one or more ids are included the search will be restricted to those ids. The list of topics is capped at 10, only the first 10 topics will be factored in for the search.
  + limit: limit the response to the first `n` results. Default is 50 which for now is also a hard cap.
  + page: specify page of results you require, default is 1.
  + string: search string, this or topics must contain an entry or you will get 0 results back.
