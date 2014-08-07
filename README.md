@@ -5,6 +5,60 @@ Search engine for shownotes for the [No Agenda Show](http://www.noagendashow.com
 
 If you want to fork and work on some modifications or use this as a template for your own search engine, the following instructions might be of use.
 
+API
+----------------------
+You can use the Web API to fetch a list of existing topics, conduct searches, or pull shownotes by episode.
+All of the calls support JSON and JSONP.
+In order to receive a JSONP response make sure to include the parameter `callback` in your request.
+The following calls are supported:
+
+#### /api/topics
+
+Retrieve a list of the topics and associated ids.
+No parameters.
+Returns a list of objects describing the topics:
+
++ text: the name of the topic
++ id: the numeric id of the topic (this is used for search requests)
+
+#### /api/search
+
+Perform a search of shownotes and return the results.
+Parameters:
+
+ + topics: a space delimited list of topic ids. If none are included the search will cover all topics. If one or more ids are included the search will be restricted to those ids.
+ + limit: limit the response to the first `n` results. Default is 50 which for now is also a hard cap.
+ + page: specify page of results you require, default is 1.
+ + string: search string, this or topics must contain an entry or you will get 0 results back.
+
+ Response fields:
+
+ + result_count: number of results total for your search
+ + page_result_count: number of results returned for this page
+ + page: page number of results returned
+ + page_count: total number of pages in this result set
+ + results: a list of shownote objects
+   + show_number: the number of the show this note was posted for
+   + topic_name: the string name of the topic this note belongs to
+   + title: the title of the note
+   + urls: a list of urls included with the note
+   + text: the full body of text of the note (warning, there will be unescaped html in these notes, so as to preserve formatting or links)
+
+Example Searches:
+
+ + /api/search?string=example&page=22&limit=5
+ + /api/search?topics=2200+2201
+ + /api/search?string=mac&cheese&callback=foo (JSONP example)
+
+#### /api/shows
+
+Fetch all shownotes for the given show number
+Parameters:
+
+ + number: show number
+
+ Response is a list of shownote objects, with fields as listed above for the search call.
+
 Set up for development
 ----------------------
 nasearch is built on Django with Haystack/Whoosh and MySQL.
