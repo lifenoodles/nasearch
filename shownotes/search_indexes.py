@@ -10,6 +10,7 @@ class NoteIndex(indexes.SearchIndex, indexes.Indexable):
     topic_id = indexes.IntegerField(model_attr='topic__id')
     topic_name = indexes.CharField(model_attr='topic__name')
     show_number = indexes.IntegerField(model_attr='show_id')
+    note_id = indexes.IntegerField(model_attr='id')
 
     def get_model(self):
         return Note
