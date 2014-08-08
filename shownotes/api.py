@@ -37,3 +37,13 @@ def show(request):
     fetch all shownotes belonging to a specific show number
     """
     return wrap_json(request, searches.show(request.GET))
+
+
+def note(request):
+    """
+    retrieve details of a specific note by id
+    """
+    payload = []
+    if 'id' in request.GET and request.GET['id'].isdigit():
+        payload = searches.note(int(request.GET['id']))
+    return wrap_json(request, payload)

@@ -1,4 +1,4 @@
-from shownotes.models import Topic
+from shownotes.models import Topic, Note, UrlEntry, TextEntry
 from django.core.paginator import Paginator, EmptyPage
 from haystack.query import SearchQuerySet, SQ
 from haystack.inputs import AutoQuery
@@ -9,7 +9,19 @@ def json_result(result):
             'topic_name': result.topic_name,
             'title': result.text,
             'urls': [url for url in result.url_entries],
-            'text': result.text_entry}
+            'text': result.text_entry,
+            'id': result.note_id}
+
+
+def json_note(note):
+    text_entry = TextEntry.objects.get(note=note.id)
+    urls = UrlEntry.objects.filter(note=note.id)
+    return {'show_number': note.show.id,
+            'topic_name': note.topic.name,
+            'title': note.title,
+            'urls': [url.url for url in urls],
+            'text': text_entry.text,
+            'id': note.id}
 
 
 def topics():
@@ -66,4 +78,12 @@ def show(parameters):
             .order_by('topic_name')
         return [json_result(show) for show in shows]
     else:
+        return []
+
+
+def note(note_id):
+    try:
+        note = Note.objects.get(id=note_id)
+        return json_note(note)
+    except:
         return []

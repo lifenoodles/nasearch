@@ -9,5 +9,6 @@ urlpatterns = patterns(
     url(r'^topics$', views.topics),
     url(r'^api/topics$', api.topics),
     url(r'^api/search$', api.search),
-    url(r'^api/show$', api.show)
+    url(r'^api/show$', api.show),
+    url(r'^api/note$', api.note)
 )
