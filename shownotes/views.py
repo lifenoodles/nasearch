@@ -39,9 +39,9 @@ def search_topics(request):
                 .order_by('show_number').order_by('topic_name')
         else:
             query = request.GET['string']
-            results = SearchQuerySet().filter(topic_id__in=topic_ids) \
-                .filter(SQ(text=AutoQuery(query)) |
-                        SQ(text_entry=AutoQuery(query)))
+            print topic_ids
+            results = SearchQuerySet().filter_and(
+                SQ(text=AutoQuery(query)), topic_id__in=topic_ids)
 
         context['matches'] = len(results)
         paginator = Paginator(results, RESULTS_SEARCH_LIMIT)

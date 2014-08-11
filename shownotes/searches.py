@@ -7,9 +7,9 @@ def search(string, topics):
         return SearchQuerySet().filter(topic_id__in=topics).order_by(
             '-show_number').order_by('topic_name')
     else:
-        return SearchQuerySet().filter(topic_id__in=topics) \
-            .filter(SQ(text=AutoQuery(string)) |
-                    SQ(text_entry=AutoQuery(string)))
+        return SearchQuerySet().filter(
+            SQ(text=AutoQuery(string)),
+            topic_id__in=topics)
 
 
 def topics_in_show(number):
