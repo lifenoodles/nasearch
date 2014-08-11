@@ -4,7 +4,6 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from haystack.query import SearchQuerySet, SQ
 from haystack.inputs import AutoQuery
-import searches
 import json
 
 
@@ -37,7 +36,7 @@ def search_topics(request):
                                     content_type='application/json')
 
             results = SearchQuerySet().filter(topic_id__in=topic_ids) \
-                .order_by('-show_number').order_by('topic_name')
+                .order_by('show_number').order_by('topic_name')
         else:
             query = request.GET['string']
             results = SearchQuerySet().filter(topic_id__in=topic_ids) \
@@ -73,10 +72,3 @@ def search_topics(request):
                                         'page_count': '0',
                                         'html': html}),
                             content_type='application/json')
-
-
-def topics(request):
-    topics = searches.topics()
-    topics.sort(key=lambda x: x['text'])
-    return HttpResponse(json.dumps(topics),
-                        content_type='application/json')

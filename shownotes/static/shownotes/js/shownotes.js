@@ -88,7 +88,7 @@
                     .click(self.click_picked);
             }
 
-            $.get('topics', handleResponse);
+            $.get('api/topics', handleResponse);
         };
 
         self.filterList = function () {

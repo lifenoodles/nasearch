@@ -1,6 +1,7 @@
 import searches
 import json
 from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage
 from shownotes.models import Note, UrlEntry, TextEntry, Topic
 
 
@@ -27,13 +28,22 @@ def wrap_json(request, payload):
                             content_type='application/json')
 
 
+def paginate(results, page, limit):
+    paginator = Paginator(results, limit)
+    try:
+        paged_results = paginator.page(page)
+        return (paged_results, page, paginator.num_pages)
+    except EmptyPage:
+        return ([], 1, 1)
+
+
 def topics(request):
     """
     return a list of paired topic names and ids
     """
     return wrap_json(
-        [{'text': t.name, 'id': t.id} for t in Topic.objects.all()],
-        request, payload())
+        request,
+        [{'text': t.name, 'id': t.id} for t in Topic.objects.all()])
 
 
 def search(request):
@@ -44,37 +54,31 @@ def search(request):
     RESULTS_LIMIT = 50
     TOPIC_LIMIT = 10
     topics = []
-    if 'topics' in parameters:
-        topics = [int(t) for t in parameters['topics'].split() if t.isdigit()]
+    if 'topics' in request.GET:
+        topics = [int(t) for t in request.GET['topics'].split() if t.isdigit()]
     topics = topics[:TOPIC_LIMIT]
-    limit = RESULTS_LIMIT
-    if 'limit' in parameters and parameters['limit'].isdigit():
-        limit = min(RESULTS_LIMIT, int(parameters['limit']))
-    page = 1
-    if 'page' in parameters and parameters['page'].isdigit():
-        page = int(parameters['page'])
     string = ''
-    if 'string' in parameters:
-        string = parameters['string']
+    if 'string' in request.GET:
+        string = request.GET['string']
+    limit = RESULTS_LIMIT
+    if 'limit' in request.GET and request.GET['limit'].isdigit():
+        limit = min(RESULTS_LIMIT, int(request.GET['limit']))
+    page = 1
+    if 'page' in request.GET and request.GET['page'].isdigit():
+        page = int(request.GET['page'])
 
-    response_dict = {'results': [], 'page': 0, 'page_count': 0,
-                     'result_count': 0, 'page_result_count': 0}
+    response = {'results': [], 'page': 1, 'page_count': 1,
+                'result_count': 0, 'page_result_count': 0}
     if string == '' and topics == []:
-        return response_dict
+        return wrap_json(request, response)
 
     results = searches.search(string, topics)
-    response_dict['result_count'] = results.count()
-    paginator = Paginator(results, limit)
-    response_dict['page_count'] = paginator.num_pages
-    try:
-        paged_results = paginator.page(page)
-        response_dict['page'] = page
-    except EmptyPage:
-        paged_results = []
-        response_dict['page'] = 0
-    response_dict['results'] = [json_result(x) for x in paged_results]
-    response_dict['page_result_count'] = len(paged_results)
-    return wrap_json(request, response_dict)
+    response['result_count'] = results.count()
+    paged_results, response['page'], response['page_count'] = \
+        paginate(results, page, limit)
+    response['results'] = [json_result(x) for x in paged_results]
+    response['page_result_count'] = len(paged_results)
+    return wrap_json(request, response)
 
 
 def show(request):
