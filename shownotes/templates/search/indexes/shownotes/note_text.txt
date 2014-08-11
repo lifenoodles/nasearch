@@ -1,2 +1,6 @@
 {{ object.title }}
 {{ object.text_entry }}
+{% for url in object.urls %}
+    {{ url.url }}
+{% endfor %}
+{{ object.topic.name }}
