@@ -31,8 +31,7 @@ class Command(BaseCommand):
             print link
             number = number_re.search(link).group()
             try:
-                netutils.insert_show_source(
-                    link, number)
+                netutils.insert_show_source(link, number)
                 loaders.load_shownotes(number)
             except:
                 print('Error updating shownotes:')
