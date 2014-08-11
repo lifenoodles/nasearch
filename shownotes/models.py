@@ -46,6 +46,15 @@ class Note(models.Model):
         return u'{} [{}]: {}'.format(
             self.topic, self.show.id, self.title[:20])
 
+    def text_entry(self):
+        try:
+            return TextEntry.get_by_note(self)[0].text
+        except:
+            return ''
+
+    def urls(self):
+        return UrlEntry.get_by_note(self)
+
     @classmethod
     def get_by_topic(cls, topic):
         return Note.objects.filter(topic=topic)
