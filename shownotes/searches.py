@@ -79,11 +79,3 @@ def show(parameters):
         return [json_result(show) for show in shows]
     else:
         return []
-
-
-def note(note_id):
-    try:
-        note = Note.objects.get(id=note_id)
-        return json_note(note)
-    except:
-        return []

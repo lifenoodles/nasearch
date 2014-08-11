@@ -1,6 +1,7 @@
 import searches
 import json
 from django.http import HttpResponse
+from shownotes.models import Note, UrlEntry, TextEntry
 
 
 def wrap_json(request, payload):
@@ -43,7 +44,18 @@ def note(request):
     """
     retrieve details of a specific note by id
     """
-    payload = []
     if 'id' in request.GET and request.GET['id'].isdigit():
-        payload = searches.note(int(request.GET['id']))
+        try:
+            note = Note.objects.get(id=int(request.GET['id']))
+            urls = UrlEntry.get_by_note(note)
+            text_entry = TextEntry.get_by_note(note)[0]
+            payload = {'show_number': note.show.id,
+                       'topic_name': note.topic.name,
+                       'title': note.title,
+                       'urls': [url.url for url in urls],
+                       'text': text_entry.text,
+                       'id': note.id}
+        except Exception as e:
+            print e
+            payload = {}
     return wrap_json(request, payload)
