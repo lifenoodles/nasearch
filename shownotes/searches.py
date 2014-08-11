@@ -4,26 +4,6 @@ from haystack.query import SearchQuerySet, SQ
 from haystack.inputs import AutoQuery
 
 
-def json_result(result):
-    return {'show_number': result.show_number,
-            'topic_name': result.topic_name,
-            'title': result.text,
-            'urls': [url for url in result.url_entries],
-            'text': result.text_entry,
-            'id': result.note_id}
-
-
-def json_note(note):
-    text_entry = TextEntry.objects.get(note=note.id)
-    urls = UrlEntry.objects.filter(note=note.id)
-    return {'show_number': note.show.id,
-            'topic_name': note.topic.name,
-            'title': note.title,
-            'urls': [url.url for url in urls],
-            'text': text_entry.text,
-            'id': note.id}
-
-
 def topics():
     return [{'text': t.name, 'id': t.id} for t in Topic.objects.all()]
 
@@ -72,10 +52,5 @@ def search(parameters):
     return response_dict
 
 
-def show(parameters):
-    if 'number' in parameters and parameters['number'].isdigit():
-        shows = SearchQuerySet().filter(show_number=int(parameters['number'])) \
-            .order_by('topic_name')
-        return [json_result(show) for show in shows]
-    else:
-        return []
+def show(number):
+    return SearchQuerySet().filter(show_number=number).order_by('topic_name')

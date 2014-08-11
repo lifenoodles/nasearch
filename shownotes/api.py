@@ -4,6 +4,15 @@ from django.http import HttpResponse
 from shownotes.models import Note, UrlEntry, TextEntry
 
 
+def json_result(result):
+    return {'show_number': result.show_number,
+            'topic_name': result.topic_name,
+            'title': result.text,
+            'urls': [url for url in result.url_entries],
+            'text': result.text_entry,
+            'id': result.note_id}
+
+
 def wrap_json(request, payload):
     """
     return HttpResponse with data correctly formatted for json or jsonp
@@ -37,7 +46,11 @@ def show(request):
     """
     fetch all shownotes belonging to a specific show number
     """
-    return wrap_json(request, searches.show(request.GET))
+    payload = []
+    if 'number' in request.GET and request.GET['number'].isdigit():
+        payload = [json_result(r) for r in
+                   searches.show(int(request.GET['number']))]
+    return wrap_json(request, payload)
 
 
 def note(request):
