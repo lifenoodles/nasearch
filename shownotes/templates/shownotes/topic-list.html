@@ -15,8 +15,8 @@
     {% for entry in result.url_entries %}
         <li><a href={{ entry }}>{{ entry }}</a></li>
     {% endfor %}
-    {% if result.text_entry %}
-        <li>{{ result.text_entry }}</li>
+    {% if result.entry %}
+        <li>{{ result.entry }}</li>
     {% endif %}
 </ul>
 </div>
