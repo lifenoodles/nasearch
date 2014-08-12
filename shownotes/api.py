@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage
 from shownotes.models import Note, UrlEntry, TextEntry, Topic
 
+RESULTS_LIMIT = 50
+
 
 def json_result(result):
     return {'show_number': result.show_number,
@@ -37,13 +39,24 @@ def paginate(results, page, limit):
         return ([], 1, 1)
 
 
+def fill_response(search_results, page, limit):
+    response = {}
+    response['result_count'] = search_results.count()
+    paged_results, response['page'], response['page_count'] = \
+        paginate(search_results, page, limit)
+    response['notes'] = [json_result(x) for x in paged_results]
+    response['page_result_count'] = len(paged_results)
+    response['notes'] = []
+    return response
+
+
 def topics(request):
     """
     return a list of paired topic names and ids
     """
     return wrap_json(
         request,
-        [{'text': t.name, 'id': t.id} for t in Topic.objects.all()])
+        [{'name': t.name, 'id': t.id} for t in Topic.objects.all()])
 
 
 def search(request):
@@ -51,7 +64,6 @@ def search(request):
     perform a search and return the matches
     recognised parameters are: topics, results_limit, page, string
     """
-    RESULTS_LIMIT = 50
     TOPIC_LIMIT = 10
     topics = []
     if 'topics' in request.GET:
@@ -67,17 +79,13 @@ def search(request):
     if 'page' in request.GET and request.GET['page'].isdigit():
         page = int(request.GET['page'])
 
-    response = {'results': [], 'page': 1, 'page_count': 1,
-                'result_count': 0, 'page_result_count': 0}
+    response = {'notes': [], 'page': 1, 'page_count': 1, 'result_count': 0,
+                'page_result_count': 0}
     if string == '' and topics == []:
         return wrap_json(request, response)
 
     results = searches.search(string, topics)
-    response['result_count'] = results.count()
-    paged_results, response['page'], response['page_count'] = \
-        paginate(results, page, limit)
-    response['results'] = [json_result(x) for x in paged_results]
-    response['page_result_count'] = len(paged_results)
+    response.update(fill_response(results, page, limit))
     return wrap_json(request, response)
 
 
@@ -85,11 +93,19 @@ def show(request):
     """
     fetch all shownotes belonging to a specific show number
     """
-    payload = []
+    response = {'notes': [], 'page': 1, 'page_count': 1, 'result_count': 0,
+                'page_result_count': 0}
+    page = 1
+    if 'page' in request.GET and request.GET['page'].isdigit():
+        page = int(request.GET['page'])
+    limit = RESULTS_LIMIT
+    if 'limit' in request.GET and request.GET['limit'].isdigit():
+        limit = int(request.GET['limit'])
     if 'number' in request.GET and request.GET['number'].isdigit():
-        payload = [json_result(r) for r in
-                   searches.topics_in_show(int(request.GET['number']))]
-    return wrap_json(request, payload)
+        results = searches.topics_in_show(int(request.GET['number']))
+        response.update(fill_response(results, page, limit))
+        return wrap_json(request, response)
+    return wrap_json(request, response)
 
 
 def note(request):
@@ -107,7 +123,6 @@ def note(request):
                        'urls': [url.url for url in urls],
                        'text': text_entry.text,
                        'id': note.id}
-        except Exception as e:
-            print e
+        except:
             payload = {}
     return wrap_json(request, payload)
