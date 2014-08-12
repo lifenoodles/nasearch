@@ -18,7 +18,7 @@ Retrieve a list of the topics and associated ids.
 No parameters.
 Returns a list of objects describing the topics:
 
-+ text: the name of the topic
++ name: the name of the topic
 + id: the numeric id of the topic (this is used for search requests)
 
 #### /api/search
@@ -26,10 +26,10 @@ Returns a list of objects describing the topics:
 Perform a search of shownotes and return the results.
 Parameters:
 
+ + string: search string, this or topics must contain an entry or you will get 0 results back.
  + topics: a space delimited list of topic ids. If none are included the search will cover all topics. If one or more ids are included the search will be restricted to those ids. The list of topics is capped at 10, only the first 10 topics will be factored in for the search.
  + limit: limit the response to the first `n` results. Default is 50 which for now is also a hard cap.
  + page: specify page of results you require, default is 1.
- + string: search string, this or topics must contain an entry or you will get 0 results back.
 
  Response fields:
 
@@ -37,27 +37,45 @@ Parameters:
  + page_result_count: number of results returned for this page
  + page: page number of results returned
  + page_count: total number of pages in this result set
- + results: a list of shownote objects
+ + notes: a list of shownote objects
    + show_number: the number of the show this note was posted for
    + topic_name: the string name of the topic this note belongs to
    + title: the title of the note
    + urls: a list of urls included with the note
    + text: the full body of text of the note (warning, there will be unescaped html in these notes, so as to preserve formatting or links)
+   + id: the numeric id of this note (can be used to request again)
 
 Example Searches:
 
  + /api/search?string=example&page=22&limit=5
  + /api/search?topics=2200+2201
- + /api/search?string=mac&cheese&callback=foo (JSONP example)
+ + /api/search?string=mac+and+cheese&callback=foo (JSONP example)
 
-#### /api/shows
+#### /api/show
 
 Fetch all shownotes for the given show number
 Parameters:
 
  + number: show number
+ + limit: limit the response to the first `n` results. Default is 50 which for now is also a hard cap.
+ + page: specify page of results you require, default is 1.
 
- Response is a list of shownote objects, with fields as listed above for the search call.
+ Response is as described for the /api/search call.
+
+ #### /api/note
+
+ Retrieve details of a specific note by id
+ Parameters:
+
+ + id: the numeric id of the shownote requested
+
+Response fields:
+ + show_number: the number of the show this note was posted for
+ + topic_name: the string name of the topic this note belongs to
+ + title: the title of the note
+ + urls: a list of urls included with the note
+ + text: the full body of text of the note (warning, there will be unescaped html in these notes, so as to preserve formatting or links)
+ + id: the numeric id of this note (can be used to request again)
 
 Set up for development
 ----------------------
