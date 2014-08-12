@@ -60,9 +60,9 @@ Parameters:
  + limit: limit the response to the first `n` results. Default is 50 which for now is also a hard cap.
  + page: specify page of results you require, default is 1.
 
- Response is as described for the /api/search call.
+Response is as described for the /api/search call.
 
- #### /api/note
+#### /api/note
 
  Retrieve details of a specific note by id
  Parameters:
