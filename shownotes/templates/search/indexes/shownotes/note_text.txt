@@ -4,3 +4,4 @@
     {{ url.url }}
 {% endfor %}
 {{ object.topic.name }}
+{{ object.show.id }}
