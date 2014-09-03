@@ -2,8 +2,10 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Max, Min
 from haystack.query import SearchQuerySet, SQ
 from haystack.inputs import AutoQuery
+from shownotes.models import Show
 import json
 
 
@@ -12,7 +14,11 @@ RESULTS_SEARCH_LIMIT = 20
 
 
 def index(request):
-    return render(request, 'shownotes/index.html')
+    agg = Show.objects.all().aggregate(Max('id'), Min('id'))
+    context = {'show_numbers':
+               [x for x in range(agg['id__min'], agg['id__max'])]}
+    print context
+    return render(request, 'shownotes/index.html', context)
 
 
 def search_topics(request):

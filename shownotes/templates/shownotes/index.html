@@ -41,6 +41,27 @@
             </div>
         </div>
         <div class="row">
+            <div class="input-group">
+                <span class="input-group-addon front-label">From Show</span>
+                <select id="show-from" class="form-control">
+                {% for number in show_numbers %}
+                <option value="{{ number }}" {% if number == show_numbers.0 %}selected="selected"{% endif %}>
+                    {{ number }}
+                </option>
+                {% endfor %}
+                </select>
+            <span class="input-group-addon front-label">To Show</span>
+                <select id="show-from" class="form-control">
+                {% for number in show_numbers %}
+                <option value="{{ number }}" {% if number == show_numbers|last %}selected="selected"{% endif %}>
+                    {{ number }}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
             <div id="top-input" class="input-group">
             <span class="input-group-addon front-label">Topic Filters</span>
             <input data-toggle="dropdown" id="topic-field" type="text" class="form-control">
