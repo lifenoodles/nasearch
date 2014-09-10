@@ -51,7 +51,7 @@
                 {% endfor %}
                 </select>
             <span class="input-group-addon front-label">To Show</span>
-                <select id="show-from" class="form-control">
+                <select id="show-to" class="form-control">
                 {% for number in show_numbers %}
                 <option value="{{ number }}" {% if number == show_numbers|last %}selected="selected"{% endif %}>
                     {{ number }}
