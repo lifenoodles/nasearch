@@ -46,7 +46,6 @@ def fill_response(search_results, page, limit):
         paginate(search_results, page, limit)
     response['notes'] = [json_result(x) for x in paged_results]
     response['page_result_count'] = len(paged_results)
-    response['notes'] = []
     return response
 
 
@@ -78,13 +77,20 @@ def search(request):
     page = 1
     if 'page' in request.GET and request.GET['page'].isdigit():
         page = int(request.GET['page'])
+    min_show = 0
+    if 'min_show' in request.GET and request.GET['min_show'].isdigit():
+        min_show = int(request.GET['min_show'])
+    max_show = None
+    if 'max_show' in request.GET and request.GET['max_show'].isdigit():
+        max_show = int(request.GET['max_show'])
 
     response = {'notes': [], 'page': 1, 'page_count': 1, 'result_count': 0,
                 'page_result_count': 0}
     if string == '' and topics == []:
         return wrap_json(request, response)
 
-    results = searches.search(string, topics)
+    results = searches.search(string, topics, min_show, max_show)
+    print results
     response.update(fill_response(results, page, limit))
     return wrap_json(request, response)
 
