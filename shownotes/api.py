@@ -46,7 +46,6 @@ def fill_response(search_results, page, limit):
         paginate(search_results, page, limit)
     response['notes'] = [json_result(x) for x in paged_results]
     response['page_result_count'] = len(paged_results)
-    response['notes'] = []
     return response
 
 
