@@ -171,7 +171,9 @@
             startLoadingNotes();
             payload = {"string": $("#search-field").val(),
                 "topics": topicPopupView.selectedTopics().join(" "),
-                "page": page};
+                "page": page,
+                "min_show": $("#show-from").val(),
+                "max_show": $("#show-to").val()};
 
             $.get('search', payload,
                 function (response) {

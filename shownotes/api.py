@@ -1,7 +1,6 @@
 import searches
 import json
 from django.http import HttpResponse
-from django.core.paginator import Paginator, EmptyPage
 from shownotes.models import Note, UrlEntry, TextEntry, Topic
 
 RESULTS_LIMIT = 50
@@ -30,20 +29,10 @@ def wrap_json(request, payload):
                             content_type='application/json')
 
 
-def paginate(results, page, limit):
-    paginator = Paginator(results, limit)
-    try:
-        paged_results = paginator.page(page)
-        return (paged_results, page, paginator.num_pages)
-    except EmptyPage:
-        return ([], 1, 1)
-
-
 def fill_response(search_results, page, limit):
-    response = {}
-    response['result_count'] = search_results.count()
+    response = {'results_count': search_results.count()}
     paged_results, response['page'], response['page_count'] = \
-        paginate(search_results, page, limit)
+        searches.paginate(search_results, page, limit)
     response['notes'] = [json_result(x) for x in paged_results]
     response['page_result_count'] = len(paged_results)
     return response
@@ -77,13 +66,19 @@ def search(request):
     page = 1
     if 'page' in request.GET and request.GET['page'].isdigit():
         page = int(request.GET['page'])
+    min_show = 0
+    if 'min_show' in request.GET and request.GET['min_show'].isdigit():
+        min_show = int(request.GET['min_show'])
+    max_show = None
+    if 'max_show' in request.GET and request.GET['max_show'].isdigit():
+        max_show = int(request.GET['max_show'])
 
     response = {'notes': [], 'page': 1, 'page_count': 1, 'result_count': 0,
                 'page_result_count': 0}
     if string == '' and topics == []:
         return wrap_json(request, response)
 
-    results = searches.search(string, topics)
+    results = searches.search(string, topics, min_show, max_show)
     response.update(fill_response(results, page, limit))
     return wrap_json(request, response)
 
