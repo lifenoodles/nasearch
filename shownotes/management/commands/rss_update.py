@@ -11,7 +11,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         feed = netutils.get_rss_feed(Command.NA_RSS_URL)
-
         shownote_links = filter(lambda x: 'noagendanotes' in x,
                                 netutils.extract_urls_from_rss(feed))
         number_re = re.compile('\d+')
@@ -34,6 +33,7 @@ class Command(BaseCommand):
                 netutils.insert_show_source(link, number)
                 loaders.load_shownotes(number)
             except:
-                print('Error updating shownotes:')
+                print('Error updating shownotes, removing source:')
+                ShowSource.objects.get(show_number=number).delete()
                 import traceback
                 traceback.print_exc()
