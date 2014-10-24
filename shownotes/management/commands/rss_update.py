@@ -33,7 +33,8 @@ class Command(BaseCommand):
                 netutils.insert_show_source(link, number)
                 loaders.load_shownotes(number)
             except:
-                print('Error updating shownotes, removing source:')
+                print('Error updating shownotes for show {}, removing source:'
+                      .format(number))
                 ShowSource.objects.get(show_number=number).delete()
                 import traceback
                 traceback.print_exc()
