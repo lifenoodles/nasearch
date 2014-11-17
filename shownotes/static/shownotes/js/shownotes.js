@@ -189,6 +189,11 @@
                 $(this).parent().parent().next().toggle(200);
             });
 
+        $("#content").on("click", ".click-close",
+            function () {
+                $(this).parent().parent().parent().toggle(200);
+            })
+
         $("#content").on("mouseenter", ".shownote-heading",
             function () {
                 $(this).removeClass("bg-info");

@@ -23,26 +23,30 @@ ul {
 }
 
 .bg-grey {
-    background-color: #F6F6F6;
+  background-color: #F6F6F6;
+}
+
+.click-close:hover {
+  background-color: #E2E2E2;
 }
 
 .show-title {
-    margin-top: 1em;
+  margin-top: 1em;
 }
 
 .shownote-heading {
-    margin: 0 0 0 0;
+  margin: 0 0 0 0;
 }
 
 .stacker {
-    position: absolute;
-    right: 0;
-    z-index: 100;
+  position: absolute;
+  right: 0;
+  z-index: 100;
 }
 
 .selected-topics {
-    float: right;
-    width: 100%;
+  float: right;
+  width: 100%;
 }
 
 /* topic dropdown menu */
@@ -71,11 +75,11 @@ ul {
 
 /* overriding bootstrap */
 .jumbotron {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .bg-primary a {
-    color: orange;
+  color: orange;
 }
 
 /* styles for icons in lists */
