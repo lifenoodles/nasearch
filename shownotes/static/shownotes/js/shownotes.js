@@ -184,18 +184,18 @@
                 });
         }
 
-        $("#content").on("click", ".shownote-heading-div",
+        $("#content").on("click", ".shownote-title-div",
             function () {
-                $(this).next().toggle(200);
+                $(this).parent().parent().next().toggle(200);
             });
 
-        $("#content").on("mouseenter", ".shownote-heading-div",
+        $("#content").on("mouseenter", ".shownote-heading",
             function () {
                 $(this).removeClass("bg-info");
                 $(this).addClass("bg-primary");
             });
 
-        $("#content").on("mouseleave", ".shownote-heading-div",
+        $("#content").on("mouseleave", ".shownote-heading",
             function () {
                 $(this).removeClass("bg-primary");
                 $(this).addClass("bg-info");

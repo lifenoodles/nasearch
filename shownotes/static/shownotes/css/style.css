@@ -15,7 +15,11 @@
 }
 
 li {
-    padding: 4px;
+    padding: 4px 4px 0 4px;
+}
+
+ul {
+  margin-bottom: 0px;
 }
 
 .bg-grey {
@@ -27,7 +31,7 @@ li {
 }
 
 .shownote-heading {
-    margin: 0 0 6px 0;
+    margin: 0 0 0 0;
 }
 
 .stacker {
@@ -94,9 +98,25 @@ li {
 }
 
 .right {
-    float: right;
+  float: right;
 }
 
 .highlighted {
-    font-weight: bold;
+  font-weight: bold;
+}
+
+.listen-link {
+  margin-right: 4px;
+}
+
+.left-spacing {
+  margin-left: 4px;
+}
+
+.link-icon {
+  color: inherit;
+}
+
+.link-icon:hover {
+  color: inherit;
 }

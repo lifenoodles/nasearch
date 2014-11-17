@@ -75,6 +75,7 @@ def search(request):
 
     response = {'notes': [], 'page': 1, 'page_count': 1, 'result_count': 0,
                 'page_result_count': 0}
+
     if string == '' and topics == []:
         return wrap_json(request, response)
 

@@ -1,28 +1,37 @@
+{% spaceless %}
 {% if results %}
 <ul class="list-unstyled">
-{% autoescape off %}
-{% for result in results %}
-<div>
-<div class="shownote-heading-div bg-info">
-<li class="shownote-heading pointer">
-<div class="row">
-<div class="col-md-10"><span class="caret"></span>[{{ result.show_number }}] {{ result.title }}</div><div class="col-md-2 text-right">{{ result.topic_name }}</div>
-</div>
-</li>
-</div>
-<div class="not-visible bg-grey shownote-entries">
-<ul class="list-unstyled icon-list chevron-right">
-    {% for entry in result.url_entries %}
-        <li><a href={{ entry }}>{{ entry }}</a></li>
-    {% endfor %}
-    {% if result.entry %}
-        <li>{{ result.entry }}</li>
-    {% endif %}
-</ul>
-</div>
+    {% autoescape off %}
+    {% for result in results %}
+    <li>
+        <div class="row">
+            <div class="col-md-1">
+                <span>[{{ result.show_number }}]</span>
+                <a href="https://www.noagendaplayer.com/listen/{{ result.show_number }}" target="_blank" class="link-icon" title="Listen to show {{ result.show_number }} at noagendaplayer.com">
+                    <span class="glyphicon glyphicon-headphones left-spacing" aria-hidden="true"></span>
+                </a>
+            </div>
+            <div class="col-md-9 bg-info shownote-title-div shownote-heading pointer">
+                <span class="caret"></span>
+                <span class="left-spacing">{{ result.title }}</span>
+            </div>
+            <div class="col-md-2 text-right"><span>{{ result.topic_name }}</span></div>
+        </div>
+    </li>
+    <div class="not-visible bg-grey shownote-entries">
+        <ul class="list-unstyled icon-list chevron-right">
+            {% for entry in result.url_entries %}
+            <li><a href={{ entry }}>{{ entry }}</a></li>
+            {% endfor %}
+            {% if result.entry %}
+            <li>{{ result.entry }}</li>
+            {% endif %}
+        </ul>
+    </div>
 
 </div>
 {% endfor %}
 {% endautoescape %}
 </ul>
 {% endif %}
+{% endspaceless %}
