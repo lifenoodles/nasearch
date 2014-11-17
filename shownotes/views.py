@@ -40,10 +40,9 @@ def search_topics(request):
         page = int(request.GET['page'])
 
     response = {'html': '', 'page': 1, 'page_count': 1}
-    if string == '' and topics == []:
-        response['html'] = render_to_string('shownotes/empty-topic.html')
-        return HttpResponse(json.dumps(response),
-                            content_type='application/json')
+
+    if string == '':
+        string = '*'
 
     context = {}
     if len(topics) > TOPIC_SEARCH_LIMIT:

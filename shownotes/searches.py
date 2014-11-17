@@ -8,7 +8,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def search(string, topics, min_show=0, max_show=None):
     if max_show is None:
         max_show = Show.objects.all().aggregate(Max('id'))['id__max']
-    print max_show
     if string == '':
         return SearchQuerySet().filter(
             topic_id__in=topics, show_number__gte=min_show,
