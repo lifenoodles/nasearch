@@ -43,21 +43,10 @@
         <div class="row">
             <div class="input-group">
                 <span class="input-group-addon front-label">From Show</span>
-                <select id="show-from" class="form-control">
-                {% for number in show_numbers %}
-                <option value="{{ number }}" {% if number == show_numbers.0 %}selected="selected"{% endif %}>
-                    {{ number }}
-                </option>
-                {% endfor %}
-                </select>
+
+                <input id="show-from" type="text" class="form-control" placeholder="{{ show_number_min }}">
             <span class="input-group-addon front-label">To Show</span>
-                <select id="show-to" class="form-control">
-                {% for number in show_numbers %}
-                <option value="{{ number }}" {% if number == show_numbers|last %}selected="selected"{% endif %}>
-                    {{ number }}
-                </option>
-                {% endfor %}
-                </select>
+                <input id="show-to" type="text" class="form-control" placeholder="{{ show_number_max }}">
             </div>
         </div>
 
@@ -95,4 +84,3 @@
     <script src="{% static "shownotes/js/shownotes.js" %}" type="text/javascript"></script>
 </body>
 </html>
-
