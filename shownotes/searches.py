@@ -8,10 +8,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def search(string, topics, min_show=0, max_show=None):
     if max_show is None:
         max_show = Show.objects.all().aggregate(Max('id'))['id__max']
-    if string == '':
+    if string == '' or string == '*':
         return SearchQuerySet().filter(
             topic_id__in=topics, show_number__gte=min_show,
-            show_number__lte=max_show).order_by('-show_number', 'topic_name')
+            show_number__lte=max_show).order_by('show_number', 'topic_name')
     else:
         return SearchQuerySet().filter(
             SQ(text=AutoQuery(string)), topic_id__in=topics,
