@@ -1,0 +1,14 @@
+{% spaceless %}
+<span class="topic-dropdown dropdown-menu" role="menu" aria-labelledby="topic-field">
+    <span class="padded"><b>Enter text to filter topics</b></span>
+    <div class="topic-data">
+        <span class="topic-suggestions">
+            {% for topic in topics %}
+            <span id="topic{{ topic.id }}" data-id="{{ topic.id }}"
+                  class="topic-suggestion bg-primary">{{ topic.name }}</span>
+            {% endfor %}
+            <span id="no-topics-text" class="not-visible padded">No topics match</span>
+        </span>
+    </div>
+</span>
+{% endspaceless %}

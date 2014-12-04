@@ -1,0 +1,6 @@
+{% spaceless %}
+{% for topic in topics %}
+<span id="topic{{ topic.id }}" data-id="{{ topic.id }}"
+class="topic-suggestion not-visible right bg-primary">{{ topic.name }}</span>
+{% endfor %}
+{% endspaceless %}

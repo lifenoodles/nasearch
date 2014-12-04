@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $, Mustache*/
+/*global $*/
 
 (function () {
     "use strict";
@@ -29,11 +29,9 @@
         self.template = $('#topic-list-template').html();
         self.selectedTemplate =
             $('#topic-selected-template').html();
-        self.view = {};
-        self.topics = {};
 
         self.click_unpicked = function (event) {
-            var id = self.topics[$(this).attr("data-id")].id;
+            var id = $(this).attr("data-id");
             $(this).hide();
             $(this).addClass('picked');
             $(".selected-topics").find("#topic" + id).show();
@@ -41,54 +39,29 @@
         };
 
         self.click_picked = function (event) {
-            var id = self.topics[$(this).attr("data-id")].id;
+            var id = $(this).attr("data-id");
             $(this).hide();
             $(".topic-suggestions").find("#topic" + id)
                 .show().removeClass('picked');
             event.stopPropagation();
         };
 
-        self.render = function () {
-            $('#topic-field').after(
-                Mustache.render(self.template, self.view)
-            );
-            $('.selected-topics').append(
-                Mustache.render(self.selectedTemplate,
-                    {topics: self.view.topics.reverse()})
-            );
-        };
-
         self.selectedTopics = function () {
             var topics = [];
             $(".topic-suggestions .picked").each(function () {
-                var id = self.topics[$(this).attr("data-id")].id;
+                var id = $(this).attr("data-id");
                 topics.push(id);
             });
             return topics;
         };
 
-        self.getTopics = function () {
-            function handleResponse(response) {
-                var i, topics = response;
-
-                self.view = {
-                    topics: topics
-                };
-
-                for (i = 0; i < topics.length; i += 1) {
-                    self.topics[topics[i].id] = topics[i];
-                }
-
-                self.render();
-                $(".topic-suggestions")
-                    .find(".topic-suggestion")
-                    .click(self.click_unpicked);
-                $(".selected-topics")
-                    .find(".topic-suggestion")
-                    .click(self.click_picked);
-            }
-
-            $.get('api/topics', handleResponse);
+        self.bindTopicHandlers = function () {
+            $(".topic-suggestions")
+                .find(".topic-suggestion")
+                .click(self.click_unpicked);
+            $(".selected-topics")
+                .find(".topic-suggestion")
+            .click(self.click_picked);
         };
 
         self.filterList = function () {
@@ -118,8 +91,8 @@
         $("#topic-field").click(self.filterList);
         $("#topic-field").keyup(self.filterList);
 
-        // initialise data and render
-        self.getTopics();
+        // invoke bindings for topic handlers
+        self.bindTopicHandlers();
     }
 
     $(document).ready(function () {
@@ -127,7 +100,6 @@
             payload = {},
             loadComplete = false,
             topicPopupView = new TopicPopupView();
-        Mustache.tags = ["[[", "]]"];
 
         function handlePageResponse(page, pageCount) {
             $("#load-button").text("Load More");
@@ -192,7 +164,7 @@
         $("#content").on("click", ".click-close",
             function () {
                 $(this).parent().parent().parent().toggle(200);
-            })
+            });
 
         $("#content").on("mouseenter", ".shownote-heading",
             function () {
@@ -230,8 +202,7 @@
 
         $(window).scroll(function () {
             if ($(window).scrollTop() ===
-                    $(document).height() - $(window).height()
-                    && page > 0) {
+                    $(document).height() - $(window).height() && page > 0) {
                 nextPage();
             }
         });

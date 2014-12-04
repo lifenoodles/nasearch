@@ -14,8 +14,8 @@ RESULTS_SEARCH_LIMIT = 20
 def index(request):
     agg = Show.objects.all().aggregate(Max('id'), Min('id'))
     context = {'show_number_min': agg['id__min'],
-               'show_number_max': agg['id__max']}
-    print context
+               'show_number_max': agg['id__max'],
+               'topics': searches.topics()}
     return render(request, 'shownotes/index.html', context)
 
 

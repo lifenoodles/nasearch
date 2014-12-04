@@ -1,8 +1,15 @@
 from haystack.query import SearchQuerySet, SQ
 from haystack.inputs import AutoQuery
-from shownotes.models import Show
+from shownotes.models import Show, Topic
 from django.db.models import Max
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
+def topics():
+    """
+    return a list of paired topic names and ids
+    """
+    return [{'name': t.name, 'id': t.id} for t in Topic.objects.all()]
 
 
 def search(string, topics, min_show=0, max_show=None):

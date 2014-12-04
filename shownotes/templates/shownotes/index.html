@@ -12,12 +12,6 @@
         href="{% static "shownotes/css/style.css" %}">
     <link rel="stylesheet"
         href="{% static "shownotes/css/typeahead.css" %}">
-    <script id="topic-list-template" type="text/html">
-        {% include "mustache/mustache-topic-popup.html" %}
-    </script>
-    <script id="topic-selected-template" type="text/html">
-        {% include "mustache/mustache-topic-selected.html" %}
-    </script>
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-static-top" role="navigation">
@@ -54,6 +48,7 @@
             <div id="top-input" class="input-group">
             <span class="input-group-addon front-label">Topic Filters</span>
             <input data-toggle="dropdown" id="topic-field" type="text" class="form-control">
+            {% include "topic-popup.html" %}
             <span class="input-group-btn">
                     <button id="search-button" class="btn btn-primary" type="button">Search</button>
                 </span>
@@ -61,6 +56,7 @@
         </div>
         <div class="row">
             <div class="selected-topics">
+                {% include "topic-selected.html" %}
                 <span class="topic-suggestion fake-suggestion invisible">Topic</span>
             </div>
         </div>
