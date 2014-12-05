@@ -3,3 +3,5 @@ settings.py
 settings_dev.py
 *.sublime-project
 *.sublime-workspace
+.projectile
+.tern-port
