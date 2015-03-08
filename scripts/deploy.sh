@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
 
+set -eu
+
+if [ "${#}" -ne 2 ]; then
+    echo "Usage: ${0} <user@server> <identity_file>"
+    exit 1
+fi
+
+server=${1}
+identity_file=${2}
+
 # use rsync to copy needed files
-rsync -rv --relative -e "ssh -i /home/donagh/.ssh/server.pem" \
+echo "Transferring files to ${server}"
+rsync -a --relative -e "ssh -i ${identity_file}" \
 --exclude "*.pyc" \
 --exclude "whoosh_index" \
 --exclude "cleaned_settings.py" \
@@ -14,6 +25,11 @@ rsync -rv --relative -e "ssh -i /home/donagh/.ssh/server.pem" \
 --exclude "scripts/" \
 --exclude "deploy/" \
 --exclude "todo.txt" \
-. ubuntu@54.213.153.244:~/venv/noagenda-db/noagenda-db/
+. ${server}:~/venv/noagenda-db/noagenda-db/
 
-ssh -i ~/.ssh/server.pem ubuntu@54.213.153.244 "source ~/venv/noagenda-db/bin/activate;cd ~/venv/noagenda-db/noagenda-db;python manage.py collectstatic --noinput"
+command="source ~/venv/noagenda-db/bin/activate;"
+command+="cd ~/venv/noagenda-db/noagenda-db;"
+command+="python manage.py collectstatic --noinput;"
+command+="./bin/reload-gunicorn.sh"
+ssh -i ${identity_file} ${server} ${command}
+echo "Deploy complete"
