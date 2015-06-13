@@ -14,7 +14,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'noagenda',
         'USER': '<DEV_DB_USER>',
-        'PASSWORD': '<DEV_SECRET_KEY>',
+        'PASSWORD': '<DEV_DB_PASSWORD>',
         'HOST': '127.0.0.1',
         'PORT': '3306'
     }
