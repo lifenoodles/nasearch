@@ -99,8 +99,6 @@ def main():
     assert set(keys.keys()) == EXPECTED_SECRETS
     template_files(keys)
     prepare_database(keys)
-    print('configuration complete')
-
 
 if __name__ == '__main__':
     main()
