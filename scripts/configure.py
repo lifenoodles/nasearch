@@ -2,6 +2,9 @@
 
 import argparse
 import os
+import _mysql
+import _mysql_exceptions
+
 
 DEFAULT_SECRET_FILE = 'scripts/secrets'
 TEMPLATE_MAPPINGS = {
@@ -10,7 +13,33 @@ TEMPLATE_MAPPINGS = {
     os.path.join('templates', 'settings_dev.py.template'):
     os.path.join('nadb', 'settings_dev.py')}
 EXPECTED_SECRETS = set(['PROD_SECRET_KEY', 'PROD_DB_USER', 'PROD_DB_PASSWORD',
-                        'DEV_SECRET_KEY', 'DEV_DB_USER', 'DEV_DB_PASSWORD'])
+                        'DEV_SECRET_KEY', 'DEV_DB_USER', 'DEV_DB_PASSWORD',
+                        'ROOT_DB_USER', 'ROOT_DB_PASSWORD'])
+
+
+class MySQLConnection():
+    def __init__(self, user, password):
+        self.connection = _mysql.connect(user=user, passwd=password)
+
+    def ensure_db_exists(self, db_name, user, host, password):
+        try:
+            self.connection.query(_mysql.escape_string(
+                'CREATE DATABASE {};'.format(db_name)))
+        except _mysql_exceptions.ProgrammingError:
+            pass
+        self.connection.query(
+            "GRANT ALL PRIVILEGES ON {}.* TO '{}'@'{}' IDENTIFIED BY '{}';"
+            .format(db_name, user, host, password))
+
+
+def prepare_database(keys):
+    connector = MySQLConnection(keys['ROOT_DB_USER'], keys['ROOT_DB_PASSWORD'])
+    connector.ensure_db_exists('noagenda',
+                               keys['DEV_DB_USER'],
+                               'localhost',
+                               keys['DEV_DB_PASSWORD'])
+    print("database 'noagenda' created and permissions granted for user '{}'"
+          .format(keys['DEV_DB_USER']))
 
 
 def template_file(template, to_file, keys):
@@ -69,6 +98,7 @@ def main():
     keys = parse_keys_from_file(keys_file)
     assert set(keys.keys()) == EXPECTED_SECRETS
     template_files(keys)
+    prepare_database(keys)
     print('configuration complete')
 
 
