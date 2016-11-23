@@ -21,7 +21,7 @@
     <div class="not-visible bg-grey shownote-entries">
         <ul class="list-unstyled icon-list chevron-right">
             {% for entry in result.url_entries %}
-            <li><a href={{ entry }}>{{ entry }}</a></li>
+            <li><a target="_blank" href={{ entry }}>{{ entry }}</a></li>
             {% endfor %}
             {% if result.entry %}
             <li>{{ result.entry }}</li>
